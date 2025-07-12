@@ -271,28 +271,34 @@ export default function AdminPage() {
       const token = getSessionToken();
       if (!token) return;
 
-      const response = await fetch('/api/admin/messages', {
+      if (!messageText.trim()) {
+        setError('Please enter a message');
+        return;
+      }
+
+      const response = await fetch('/api/platform-messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          messageType: 'General Announcement',
-          message: messageText,
-          targetUsers: null
+          title: 'Platform Announcement',
+          content: messageText
         })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
       }
 
       setMessageText('');
-      alert('Message sent successfully!');
+      setError(null);
+      alert('Platform message posted successfully! It will appear below the navbar for all users.');
     } catch (error) {
       console.error('Error sending message:', error);
-      setError('Failed to send message');
+      setError(error instanceof Error ? error.message : 'Failed to send message');
     }
   };
 
@@ -548,63 +554,68 @@ export default function AdminPage() {
             transition={{ duration: 0.5 }}
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Platform Messages</h2>
-              <Button className="bg-purple-500 hover:bg-purple-600">
-                <Mail className="w-4 h-4 mr-2" />
-                Send Message
-              </Button>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Platform Messages</h2>
+                <p className="text-sm text-gray-600 mt-1">Post announcements that appear below the navbar for all users</p>
+              </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="bg-white rounded-2xl shadow-xl border border-purple-100 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Send Platform Message</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Post Platform Announcement</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Message Type</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900">
-                      <option>Feature Update</option>
-                      <option>Downtime Alert</option>
-                      <option>Maintenance Notice</option>
-                      <option>General Announcement</option>
-                    </select>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Message Title</label>
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-500"
+                      placeholder="Enter message title..."
+                      defaultValue="Platform Announcement"
+                    />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Message Content</label>
                     <textarea
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
                       rows={4}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-500"
-                      placeholder="Enter your platform message here..."
+                      placeholder="Enter your platform announcement here..."
                     />
                   </div>
+                  {error && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-600">{error}</p>
+                    </div>
+                  )}
                   <div className="flex space-x-2">
                     <Button 
                       className="bg-purple-500 hover:bg-purple-600"
                       onClick={handleSendMessage}
+                      disabled={!messageText.trim()}
                     >
                       <Send className="w-4 h-4 mr-2" />
-                      Send to All Users
+                      Post Announcement
                     </Button>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl shadow-xl border border-purple-100 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Messages</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Platform Messages</h3>
                 <div className="space-y-4">
                   <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-blue-800">Feature Update</span>
-                      <span className="text-xs text-blue-600">2 hours ago</span>
+                      <span className="text-sm font-medium text-blue-800">Welcome to LinkIT!</span>
+                      <span className="text-xs text-blue-600">Just now</span>
                     </div>
-                    <p className="text-sm text-blue-700">New skill matching algorithm has been deployed!</p>
+                    <p className="text-sm text-blue-700">We're excited to have you join our skill-sharing community. Start by creating your profile and exploring other users' skills!</p>
+                    <div className="mt-2 text-xs text-blue-600">
+                      Posted by Admin
+                    </div>
                   </div>
-                  <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-yellow-800">Maintenance Notice</span>
-                      <span className="text-xs text-yellow-600">1 day ago</span>
-                    </div>
-                    <p className="text-sm text-yellow-700">Scheduled maintenance on Sunday 2-4 AM EST</p>
+                  <div className="text-center py-4 text-gray-500 text-sm">
+                    <p>New platform messages will appear here</p>
+                    <p className="mt-1">Messages are displayed below the navbar for all users</p>
                   </div>
                 </div>
               </div>
