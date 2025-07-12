@@ -181,7 +181,7 @@ const TestimonialCard = ({
           <div className="absolute bottom-4 left-4 w-8 h-8 bg-gradient-to-br from-purple-200 to-violet-200 rounded-full opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
