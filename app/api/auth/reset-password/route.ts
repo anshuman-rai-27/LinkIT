@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       token:resetToken
     },
     include:{
-      user:true
+      User:true
     }  
   })
   
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await prisma.user.update({
     where:{
-        email:resetPassword.user.email
+        email:resetPassword.User.email
     },
     data:{
         password:hashedPassword
@@ -51,7 +51,9 @@ export async function POST(req: Request) {
         verified:true
     }
   })
-  const token = signToken({ userId: user.id, email: user.email });
+  const token = signToken({ userId: user.id, email: user.email }, {
+    expiresIn: '1d'
+  });
   return NextResponse.json({
     message: 'User registered',
     user: { id: user.id, email: user.email },

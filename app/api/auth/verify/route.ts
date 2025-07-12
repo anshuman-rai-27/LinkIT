@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../prisma';
+import { signToken } from '@/lib/jwt';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -40,10 +41,14 @@ export async function GET(req: Request) {
         verified:true
     }
   })
+
+  const testToken = await signToken({ userId: user.id, email: user.email }, {
+    expiresIn: '1d'
+  });
   return NextResponse.json({
     message: 'User registered',
     user: { id: user.id, email: user.email },
-    token,
+    token:testToken,
   }, { status: 201 });
   
 } 
