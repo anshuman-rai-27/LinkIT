@@ -1,12 +1,156 @@
-# LinkIT (odoo Hackathon- Skill Swap Platform (Problem Statement-1))
+# LinkIt - Skill Swap Platform
 
-## Team Details:
-Mayank: mayank.m.nita@gmail.com
-Anshuman: anshumanrishi27@gmail.com
-Edan: edantuti@gmail.com
-Priyanshu: priyanshudas01@gmail.com
+> A Next.js-based skill-sharing platform built for the Odoo Hackathon (Problem Statement 1)
 
-## 🚀 Quick Docker Manual Usage
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Team Details](#team-details)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Environment Setup](#environment-setup)
+- [Usage](#usage)
+- [Docker Deployment](#docker-deployment)
+- [API Documentation](#api-documentation)
+- [Admin Access](#admin-access)
+- [Contributing](#contributing)
+
+## 🎯 Overview
+
+LinkIt is a skill-sharing platform that connects users who want to exchange skills. Built with modern web technologies, it provides a seamless experience for users to find skill partners, create swap requests, and build meaningful connections.
+
+## Problem statment: Skill Swap Platform
+## 👥 Team Details
+
+**Team Members:**
+- **Mayank** - [mayank.m.nita@gmail.com](mailto:mayank.m.nita@gmail.com)
+- **Anshuman** - [anshumanrishi27@gmail.com](mailto:anshumanrishi27@gmail.com)
+- **Edan** - [edantuti@gmail.com](mailto:edantuti@gmail.com)
+- **Priyanshu** - [priyanshudas01@gmail.com](mailto:priyanshudas01@gmail.com)
+
+## ✨ Features
+
+- 🔐 **User Authentication** - Secure JWT-based authentication with email verification
+- 👤 **Profile Management** - Create and manage detailed user profiles
+- 🎯 **Skill Matching** - Find users with complementary skills
+- 📝 **Swap Requests** - Create and manage skill exchange requests
+- ⭐ **Rating System** - Rate and review other users
+- 📧 **Email Notifications** - Automated email system for verification and updates
+- 🖼️ **Image Upload** - Profile photo management with Cloudinary
+- 👨‍💼 **Admin Panel** - Comprehensive admin dashboard for platform management
+- 📱 **Responsive Design** - Mobile-friendly interface
+- 🚀 **Real-time Updates** - Live updates for requests and messages
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| **Frontend** | Next.js 14, React 18, TypeScript |
+| **Styling** | Tailwind CSS, Framer Motion |
+| **Backend** | Next.js API Routes |
+| **Database** | PostgreSQL with Prisma ORM |
+| **Authentication** | JWT (JSON Web Tokens) |
+| **File Storage** | Cloudinary |
+| **Email Service** | Resend |
+| **Icons** | Lucide React, React Icons |
+| **Containerization** | Docker |
+| **Deployment** | Vercel (recommended) |
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- npm, yarn, or pnpm
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd linkit
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Edit `.env.local` with your configuration (see [Environment Setup](#environment-setup))
+
+4. **Set up the database**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Start the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+6. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+
+## ⚙️ Environment Setup
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/linkit_db"
+
+# JWT Authentication
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+
+# Next.js
+NEXTAUTH_URL="http://localhost:3000"
+
+# Cloudinary (for image uploads)
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+
+# Email Configuration (Resend)
+SMTP_HOST="smtp.resend.com"
+SMTP_PORT="587"
+SMTP_USER="your-smtp-user"
+SMTP_PASSWORD="your-smtp-password"
+SENDER_EMAIL="noreply@yourdomain.com"
+BACKEND_URL="http://localhost:3000"
+```
+
+### Environment Variables Explained
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | ✅ |
+| `JWT_SECRET` | Secret key for JWT token signing | ✅ |
+| `NEXTAUTH_URL` | Your application URL | ✅ |
+| `CLOUDINARY_*` | Cloudinary credentials for image uploads | ✅ |
+| `SMTP_*` | Email service configuration | ✅ |
+| `BACKEND_URL` | Backend API URL | ✅ |
+
+## 🐳 Docker Deployment
+
+### Manual Docker Build
 
 If you want to build and run the app manually (without docker-compose):
 
@@ -18,106 +162,118 @@ docker build -t linkit-app .
 docker run -p 3000:3000 --name linkit-dev linkit-app
 ```
 
----
-
-# Odoo Hackathon Problem Statement 1:- Skill Swap Platform
-
-## Team Details:-
-
-**Team Members’ Emails:**  
-- [mayank.m.nita@gmail.com]  
-- [priyanshudas01@gmail.com]  
-- [anshumanrishi27@gmail.com]  
-- [edantuti@gmail.com]
-
----
-
-
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
+### Using Docker Compose
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Build and start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📚 API Documentation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For detailed API documentation, see [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The API includes endpoints for:
+- User authentication and registration
+- Profile management
+- Skill requests and exchanges
+- Feedback and ratings
+- Admin panel functionality
 
-## Learn More
+## 🔑 Admin Access
 
-To learn more about Next.js, take a look at the following resources:
+**Default Admin Credentials:**
+- **Email:** `test.2000.test.02@gmail.com`
+- **Password:** `123456789`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> ⚠️ **Security Note:** Change these credentials in production!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🏗️ Project Structure
 
-## Deploy on Vercel
+```
+linkit/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   ├── admin/             # Admin pages
+│   ├── home/              # Home page
+│   ├── login/             # Authentication pages
+│   ├── profile/           # Profile pages
+│   └── requests/          # Request management
+├── components/            # React components
+│   ├── ui/               # UI components
+│   └── ...               # Feature components
+├── lib/                  # Utility libraries
+├── prisma/               # Database schema and migrations
+├── public/               # Static assets
+└── ...                   # Configuration files
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧪 Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Available Scripts
+
+```bash
+# Development
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+
+# Database
+npm run db:generate  # Generate Prisma client
+npm run db:push      # Push schema to database
+npm run db:migrate   # Run database migrations
+
+# Linting and Formatting
+npm run lint         # Run ESLint
+npm run format       # Format code with Prettier
+```
+
+### Code Style
+
+This project uses:
+- **ESLint** for code linting
+- **Prettier** for code formatting
+- **TypeScript** for type safety
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Set environment variables in Vercel dashboard
+4. Deploy automatically on push
+
+### Other Platforms
+
+The application can be deployed to any platform that supports Next.js:
+- Netlify
+- Railway
+- DigitalOcean App Platform
+- AWS Amplify
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is created for the Odoo Hackathon. All rights reserved.
+
+## 🆘 Support
+
+For support, email the team members or create an issue in the repository.
 
 ---
 
-## 🛠️ Tech Stack
-
-- **Next.js** (React 18, App Router)
-- **TypeScript**
-- **Prisma ORM** (with PostgreSQL)
-- **Tailwind CSS** (utility-first styling)
-- **Framer Motion** (animations)
-- **Lucide React & React Icons** (iconography)
-- **Cloudinary** (image uploads)
-- **Resend** (email sending)
-- **JWT** (authentication)
-- **Docker** (containerization)
-
----
-
-## 🧪 Sample .env File
-
-```
-# Environment variables declared in this file are automatically made available to Prisma.
-# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
-
-# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
-# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
-
-# The following prisma+postgres URL is similar to the URL produced by running a local Prisma Postgres 
-# server with the prisma dev CLI command, when not choosing any non-default ports or settings. The API key, unlike the 
-# one found in a remote Prisma Postgres URL, does not contain any sensitive information.
-
-DATABASE_URL="postgresql://neondb_owner:npg_jPuRv7ZSelW6@ep-dark-flower-a18im7g4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-# JWT Secret (change this to a secure random string in production)
-JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
-
-# Next.js
-NEXTAUTH_URL="http://localhost:3000"
-
-CLOUDINARY_CLOUD_NAME=dnkjhymal
-CLOUDINARY_API_KEY=858395531446867
-CLOUDINARY_API_SECRET=UWOLSr3d2Rw-gMu6ZNhWmHup-Xc
-
-SMTP_HOST = smtp.resend.com
-SMTP_PORT = 2465
-SMTP_USER = resend
-SMTP_PASSWORD = re_eNWmeccf_EPm6maLFzF7U6n3ukujyd4iG
-SENDER_EMAIL = ninadnaik@brinconsultancy.in
-BACKEND_URL = "http://localhost:3000"
-```
-
----
+**Built with ❤️ for the Odoo Hackathon**
