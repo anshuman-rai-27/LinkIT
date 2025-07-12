@@ -39,7 +39,7 @@ export async function GET(req: NextRequest){
         }, 
         include:{
             fromProfile:true,
-            toProfile:true
+            toProfile:true,
         }
     })
 
