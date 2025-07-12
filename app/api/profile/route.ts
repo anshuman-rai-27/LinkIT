@@ -23,16 +23,25 @@ export async function GET(req: NextRequest) {
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
-  const profile = await prisma.profile.findFirst({
+  const profile = await prisma.profile.findUnique({
     where: { userId },
     include: {
-      offeredSkills: true,
-      wantedSkills: true,
-    },
+      offeredSkills: {
+        include: {
+          skill: true
+        }
+      },
+      wantedSkills: {
+        include: {
+          skill: true
+        }
+      }
+    }
   });
   if (!profile) {
     return NextResponse.json({ message: 'Profile not found' }, { status: 404 });
   }
+  
   return NextResponse.json(profile);
 }
 
@@ -51,7 +60,7 @@ export async function POST(req: NextRequest) {
   const data = await req.json();
   try {
     // Upsert profile (basic fields only)
-    await prisma.profile.upsert({
+    const profile = await prisma.profile.upsert({
       where: { userId },
       update: {
         name: data.name,
@@ -72,58 +81,71 @@ export async function POST(req: NextRequest) {
 
     // Handle offeredSkills
     if (Array.isArray(data.offeredSkills)) {
-      // Find or create all skills
-      const offeredSkillRecords = await Promise.all(
-        data.offeredSkills.map(async (name: string) => {
-          let skill = await prisma.skill.findUnique({ where: { name } });
-          if (!skill) {
-            skill = await prisma.skill.create({ data: { name } });
-          }
-          return { id: skill.id };
-        })
-      );
-      // Set offeredSkills relation
-      await prisma.profile.update({
-        where: { userId },
-        data: {
-          offeredSkills: {
-            set: offeredSkillRecords.map(s => ({ id: s.id })),
-          },
-        },
+      // Clear existing offered skills
+      await prisma.offeredSkill.deleteMany({
+        where: { profileId: profile.id }
       });
+
+      // Add new offered skills
+      for (const skillName of data.offeredSkills) {
+        // Find or create skill
+        let skill = await prisma.skill.findUnique({ where: { name: skillName } });
+        if (!skill) {
+          skill = await prisma.skill.create({ data: { name: skillName } });
+        }
+
+        // Create offered skill relation
+        await prisma.offeredSkill.create({
+          data: {
+            profileId: profile.id,
+            skillId: skill.id
+          }
+        });
+      }
     }
 
     // Handle wantedSkills
     if (Array.isArray(data.wantedSkills)) {
-      // Find or create all skills
-      const wantedSkillRecords = await Promise.all(
-        data.wantedSkills.map(async (name: string) => {
-          let skill = await prisma.skill.findUnique({ where: { name } });
-          if (!skill) {
-            skill = await prisma.skill.create({ data: { name } });
-          }
-          return { id: skill.id };
-        })
-      );
-      // Set wantedSkills relation
-      await prisma.profile.update({
-        where: { userId },
-        data: {
-          wantedSkills: {
-            set: wantedSkillRecords.map(s => ({ id: s.id })),
-          },
-        },
+      // Clear existing wanted skills
+      await prisma.wantedSkill.deleteMany({
+        where: { profileId: profile.id }
       });
+
+      // Add new wanted skills
+      for (const skillName of data.wantedSkills) {
+        // Find or create skill
+        let skill = await prisma.skill.findUnique({ where: { name: skillName } });
+        if (!skill) {
+          skill = await prisma.skill.create({ data: { name: skillName } });
+        }
+
+        // Create wanted skill relation
+        await prisma.wantedSkill.create({
+          data: {
+            profileId: profile.id,
+            skillId: skill.id
+          }
+        });
+      }
     }
 
-    // Return updated profile
+    // Return updated profile with skills
     const updatedProfile = await prisma.profile.findUnique({
       where: { userId },
       include: {
-        offeredSkills: true,
-        wantedSkills: true,
-      },
+        offeredSkills: {
+          include: {
+            skill: true
+          }
+        },
+        wantedSkills: {
+          include: {
+            skill: true
+          }
+        }
+      }
     });
+    
     return NextResponse.json(updatedProfile);
   } catch (error) {
     console.error('Profile update error:', error);

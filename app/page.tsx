@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { RoughNotation } from "react-rough-notation";
+// import { RoughNotation } from "react-rough-notation";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Lightbulb, Trophy, MessageCircle, Shield, Zap, Star, ChevronDown, ChevronUp, Sparkles, CheckCircle, Globe, Heart, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
@@ -253,7 +253,7 @@ export default function Home() {
 
                 <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
                   <span className="text-slate-900">Connect, Learn, </span>
-                  <RoughNotation
+                  {/* <RoughNotation
                     type="highlight"
                     show={true}
                     color="#8b5cf6"
@@ -262,7 +262,7 @@ export default function Home() {
                     multiline
                   >
                     <span className="text-slate-900">Grow Together</span>
-                  </RoughNotation>
+                  </RoughNotation> */}
                 </h1>
 
                 <p className="text-xl text-slate-600 leading-relaxed">
