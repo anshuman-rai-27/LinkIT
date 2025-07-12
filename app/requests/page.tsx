@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import UserProfileCard from '../../components/UserProfileCard';
-import RequestModal from '../../components/RequestModal';
+import RequestDetailsModal from '../../components/RequestDetailsModal';
 import { FaStar, FaMapMarkerAlt, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
 
 // Sample data for requests
@@ -740,9 +740,9 @@ export default function RequestsPage() {
         )}
       </div>
 
-      {/* Request Modal */}
+      {/* Request Details Modal */}
       {selectedRequest && (
-        <RequestModal 
+        <RequestDetailsModal 
           request={selectedRequest} 
           onClose={() => setSelectedRequest(null)}
           type={activeTab}

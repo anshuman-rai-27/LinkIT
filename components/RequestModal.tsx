@@ -1,173 +1,227 @@
-import React from 'react';
-import { FaStar, FaMapMarkerAlt, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
+"use client";
+import React, { useState } from 'react';
+import { X, Send, User, MessageSquare, Target, Plus, X as XIcon } from 'lucide-react';
 
 interface RequestModalProps {
-  request: {
-    id: number;
-    user: {
-      name: string;
-      avatarUrl?: string;
-      initials: string;
-      borderColor: string;
-      location: string;
-      yearsExperience: string;
-      skillsOffered: string[];
-      skillsNeeded: string[];
-      rating: number;
-    };
-    status: string;
-    message: string;
-    requestedAt: string;
+  profile: {
+    name: string;
+    avatarUrl: string;
+    initials: string;
+    borderColor: string;
+    location: string;
+    yearsExperience: string;
+    skillsOffered: string[];
+    skillsNeeded: string[];
+    rating: number;
   };
   onClose: () => void;
-  type: 'incoming' | 'outgoing';
 }
 
-const RequestModal: React.FC<RequestModalProps> = ({ request, onClose, type }) => {
-  if (!request) return null;
+export default function RequestModal({ profile, onClose }: RequestModalProps) {
+  const [formData, setFormData] = useState({
+    skills: [] as string[],
+    requestedSkills: [] as string[],
+    message: ''
+  });
+  const [newSkill, setNewSkill] = useState('');
+  const [newRequestedSkill, setNewRequestedSkill] = useState('');
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return { color: 'bg-yellow-100 text-yellow-700', icon: FaClock, text: 'Pending' };
-      case 'accepted':
-        return { color: 'bg-green-100 text-green-700', icon: FaCheck, text: 'Accepted' };
-      case 'rejected':
-        return { color: 'bg-red-100 text-red-700', icon: FaTimes, text: 'Rejected' };
-      default:
-        return { color: 'bg-gray-100 text-gray-600', icon: FaClock, text: 'Unknown' };
+  const handleAddSkill = () => {
+    if (newSkill.trim() && !formData.skills.includes(newSkill.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        skills: [...prev.skills, newSkill.trim()]
+      }));
+      setNewSkill('');
     }
   };
 
+  const handleAddRequestedSkill = () => {
+    if (newRequestedSkill.trim() && !formData.requestedSkills.includes(newRequestedSkill.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        requestedSkills: [...prev.requestedSkills, newRequestedSkill.trim()]
+      }));
+      setNewRequestedSkill('');
+    }
+  };
+
+  const handleRemoveSkill = (skill: string) => {
+    setFormData(prev => ({
+      ...prev,
+      skills: prev.skills.filter(s => s !== skill)
+    }));
+  };
+
+  const handleRemoveRequestedSkill = (skill: string) => {
+    setFormData(prev => ({
+      ...prev,
+      requestedSkills: prev.requestedSkills.filter(s => s !== skill)
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log('Request data:', formData);
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="relative max-w-2xl w-full mx-4">
-        {/* Background blur effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl"></div>
-        
-        {/* Modal content */}
-        <div className="relative backdrop-blur-md bg-white/80 border border-white/40 rounded-3xl shadow-2xl p-8 flex flex-col md:flex-row gap-8 animate-fadeIn">
-          {/* Close button */}
-          <button 
-            onClick={onClose} 
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl transition-colors z-10"
-          >
-            <FaTimes />
-          </button>
-          
-          {/* Left: Avatar and Status */}
-          <div className="flex flex-col items-center justify-center md:w-1/3 w-full">
-            {request.user.avatarUrl ? (
-              <img 
-                src={request.user.avatarUrl} 
-                alt={request.user.name} 
-                className={`w-32 h-32 rounded-full object-cover border-4 ${request.user.borderColor} shadow-lg`} 
-              />
-            ) : (
-              <div className={`w-32 h-32 rounded-full flex items-center justify-center text-3xl font-bold text-white border-4 ${request.user.borderColor} bg-gray-300 shadow-lg`}>
-                {request.user.initials}
-              </div>
-            )}
-            
-            {/* Status badge */}
-            <div className="mt-4">
-              <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium gap-2 ${getStatusConfig(request.status).color}`}>
-                {React.createElement(getStatusConfig(request.status).icon, { className: "text-sm" })}
-                {getStatusConfig(request.status).text}
-              </span>
-            </div>
-          </div>
-          
-          {/* Right: Details */}
-          <div className="flex flex-col justify-center md:w-2/3 w-full gap-4">
-            <div>
-              <h2 className="font-semibold text-3xl text-gray-800 mb-2">{request.user.name}</h2>
-              <div className="flex items-center text-gray-600 text-lg mb-4">
-                <FaMapMarkerAlt className="mr-2" />
-                {request.user.location}
-              </div>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="flex items-center gap-2 text-yellow-500 font-semibold text-xl">
-                  <FaStar className="text-xl" />
-                  {request.user.rating}
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-medium">
-                  {request.user.yearsExperience}
-                </span>
-              </div>
-            </div>
-
-            {/* Request Message */}
-            <div>
-              <h3 className="text-gray-800 text-lg font-semibold mb-3">Request Message</h3>
-              <div className="bg-gray-50 p-4 rounded-xl text-gray-700 text-sm leading-relaxed">
-                {request.message}
-              </div>
-            </div>
-
-            {/* Skills Offered */}
-            <div>
-              <h3 className="text-gray-800 text-lg font-semibold mb-3">Skills Offered</h3>
-              <div className="flex flex-wrap gap-2">
-                {request.user.skillsOffered.map((skill, idx) => (
-                  <span key={idx} className="px-3 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Skills Needed */}
-            <div>
-              <h3 className="text-gray-800 text-lg font-semibold mb-3">Skills Needed</h3>
-              <div className="flex flex-wrap gap-2">
-                {request.user.skillsNeeded.map((skill, idx) => (
-                  <span key={idx} className="px-3 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Request Date */}
-            <div className="text-gray-500 text-sm">
-              Requested on: {formatDate(request.requestedAt)}
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex items-center gap-4 mt-6 pt-6 border-t border-gray-200">
-              {type === 'incoming' && request.status === 'pending' && (
-                <>
-                  <button className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
-                    Accept
-                  </button>
-                  <button className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
-                    Reject
-                  </button>
-                </>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
+          <div className="flex items-center space-x-4">
+            <div className={`w-12 h-12 rounded-full ${profile.borderColor} border-2 flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100`}>
+              {profile.avatarUrl ? (
+                <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full rounded-full object-cover" />
+              ) : (
+                <span className="text-lg font-semibold text-gray-700">{profile.initials}</span>
               )}
-              <button 
-                onClick={onClose}
-                className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors"
-              >
-                Close
-              </button>
+            </div>
+                         <div>
+               <h2 className="text-xl font-bold text-gray-900">Send Request to {profile.name}</h2>
+               <p className="text-sm text-gray-700">{profile.location} • {profile.yearsExperience}</p>
+             </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <X className="h-5 w-5 text-gray-500" />
+          </button>
+        </div>
+
+                 {/* Form */}
+         <form onSubmit={handleSubmit} className="p-6 space-y-6">
+
+          {/* Skills You Can Offer */}
+          <div className="space-y-4">
+                         <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+               <Target className="h-5 w-5 mr-2 text-green-600" />
+               Skills You Can Offer
+             </h3>
+            <div className="space-y-3">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={newSkill}
+                  onChange={(e) => setNewSkill(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/50 backdrop-blur-sm text-gray-800 placeholder-gray-600"
+                  placeholder="Add a skill you can teach"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddSkill}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+              {formData.skills.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.skills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                    >
+                      {skill}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSkill(skill)}
+                        className="ml-2 hover:bg-green-200 rounded-full p-0.5"
+                      >
+                        <XIcon className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-        </div>
+
+          {/* Skills You Want to Learn */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+              <Target className="h-5 w-5 mr-2 text-blue-600" />
+              Skills You Want to Learn
+            </h3>
+            <div className="space-y-3">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={newRequestedSkill}
+                  onChange={(e) => setNewRequestedSkill(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddRequestedSkill())}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm text-gray-800 placeholder-gray-600"
+                  placeholder="Add a skill you want to learn"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddRequestedSkill}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+              {formData.requestedSkills.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.requestedSkills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                    >
+                      {skill}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveRequestedSkill(skill)}
+                        className="ml-2 hover:bg-blue-200 rounded-full p-0.5"
+                      >
+                        <XIcon className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Message */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+              <MessageSquare className="h-5 w-5 mr-2 text-purple-600" />
+              Message
+            </h3>
+            <textarea
+              value={formData.message}
+              onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+              rows={4}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/50 backdrop-blur-sm resize-none text-gray-800 placeholder-gray-600"
+              placeholder="Introduce yourself and explain why you'd like to connect with this person..."
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex space-x-4 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-6 py-3 border border-gray-300 text-gray-800 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center space-x-2"
+            >
+              <Send className="h-4 w-4" />
+              <span>Send Request</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
-};
-
-export default RequestModal; 
+} 
