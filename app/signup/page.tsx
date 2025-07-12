@@ -14,13 +14,38 @@ export default function SignupPage() {
     e.preventDefault();
     setError("");
     setSuccess(false);
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (res.ok) {
+    
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      // Check if response is ok before trying to parse JSON
+      if (!res.ok) {
+        // Try to parse error response as JSON
+        let errorMessage = "Signup failed";
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          // If JSON parsing fails, use status text
+          errorMessage = res.statusText || errorMessage;
+        }
+        setError(errorMessage);
+        return;
+      }
+      
+      // Parse successful response
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseError) {
+        setError("Invalid response from server");
+        return;
+      }
+      
       if (data.token) {
         setSession(data.token);
         router.push("/");
@@ -29,8 +54,9 @@ export default function SignupPage() {
         setSuccess(true);
         setTimeout(() => router.push("/login"), 1500);
       }
-    } else {
-      setError(data.message || "Signup failed");
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
+      setError("Network error. Please check your connection and try again.");
     }
   }
 
