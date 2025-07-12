@@ -10,20 +10,22 @@
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "@types/nodemailer": "^6.4.17",
     "bcryptjs": "^3.0.2",
     "jose": "^6.0.11",
     "jsonwebtoken": "^9.0.2",
+    "next": "15.3.5",
+    "nodemailer": "^7.0.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.3.5"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "prisma": "^6.11.1",
-    "typescript": "^5",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4"
+    "prisma": "^6.11.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

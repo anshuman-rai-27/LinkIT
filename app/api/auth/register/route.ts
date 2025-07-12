@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../prisma';
-// @ts-ignore
 import bcrypt from 'bcryptjs';
-import { signToken } from '../../../../lib/jwt';
+import { sendMail } from '@/lib/mail';
+import { BACKEND_URL } from '@/lib/constant';
 
 export async function POST(req: Request) {
   try {
@@ -32,13 +32,25 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({
       data: { email, password: hashedPassword },
     });
-
-    const token = signToken({ userId: user.id, email: user.email });
+  
+    const hashedEmail = await bcrypt.hash(email, 10);
+  
+    await prisma.resetPasswordToken.create({
+      data: {
+        userId: user.id,
+        token: hashedEmail,
+        expires: new Date(Date.now() + 3600000) //1 hour
+      }
+    })
+  
+    await sendMail(
+      email, 
+      'Verify your email', 
+      `Click <a href="${BACKEND_URL}/verify?token=${hashedEmail}">here</a> to verify your email`
+    )
     return NextResponse.json({
-      message: 'User registered successfully',
-      user: { id: user.id, email: user.email },
-      token,
-    }, { status: 201 });
+      message:"User created", 
+    }, {status:201})
 
   } catch (error) {
     console.error('Registration error:', error);
