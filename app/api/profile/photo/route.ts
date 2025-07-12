@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   // Prepare form data for Cloudinary
   const form = new FormData();
   form.append('file', new Blob([buffer]), file.name);
-  form.append('upload_preset', 'ml_default'); // Use your unsigned preset or remove if using API key/secret
+  form.append('upload_preset', 'odooskill'); // Use your unsigned preset or remove if using API key/secret
 
   // Use basic auth for Cloudinary API
   const auth = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');

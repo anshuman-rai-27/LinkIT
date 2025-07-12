@@ -23,27 +23,62 @@ export default function ProfilePage() {
   const [availability, setAvailability] = useState("");
   const [isPublic, setIsPublic] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [existingSkills, setExistingSkills] = useState<string[]>([]);
+  const [showSkillDropdown, setShowSkillDropdown] = useState(false);
 
   // Fetch profile on mount
   useEffect(() => {
-    fetch("/api/profile")
+    setLoading(true);
+    // Fetch existing skills
+    fetch("/api/skills")
       .then(res => res.json())
       .then(data => {
-        setProfile(data);
-        setName(data.name || "");
-        setLocation(data.location || "");
-        setOfferedSkills(data.offeredSkills?.map((s: any) => s.name) || []);
-        setWantedSkills(data.wantedSkills?.map((s: any) => s.name) || []);
-        setAvailability(data.availability || "");
-        setIsPublic(data.isPublic ?? true);
-        setProfilePhoto(data.profilePhoto || null);
+        setExistingSkills(data.map((skill: any) => skill.name));
+      })
+      .catch(() => {
+        setExistingSkills([]);
+      });
+
+    const token = getTokenFromCookie();
+    fetch("/api/profile", {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+      .then(async res => {
+        if (res.status === 404) {
+          // Profile not found - show creation form
+          setProfile(null);
+          setEdit(true); // Start in edit mode for new profiles
+          setLoading(false);
+          return null;
+        }
+        if (!res.ok) throw new Error("Failed to load profile");
+        return res.json();
+      })
+      .then(data => {
+        if (data) {
+          console.log(data,data.wantedSkills[0].skill.name);
+          setProfile(data);
+          setName(data.name || "");
+          setLocation(data.location || "");
+          setOfferedSkills(Array.isArray(data.offeredSkills) ? data.offeredSkills.map((s: any) => s.skill.name) : []);
+          setWantedSkills(Array.isArray(data.wantedSkills) ? data.wantedSkills.map((s: any) => s.skill.name) : []);
+          setAvailability(data.availability || "");
+          setIsPublic(data.isPublic ?? true);
+          setProfilePhoto(data.profilePhoto || null);
+        }
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to load profile");
+        setError("Failed to load profile. Please make sure you are logged in.");
         setLoading(false);
       });
   }, []);
+
+  // Helper function to get token from cookie
+  function getTokenFromCookie() {
+    const match = document.cookie.match(/(^| )token=([^;]+)/);
+    return match ? match[2] : null;
+  }
 
   // Handle photo selection
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -70,11 +105,14 @@ export default function ProfilePage() {
   // Add skill (as tag)
   function addSkill(skill: string, type: "offered" | "wanted") {
     if (!skill.trim()) return;
+    const trimmedSkill = skill.trim();
+    
+    // Check if skill already exists in the current list
     if (type === "offered" && !offeredSkills.includes(skill)) {
-      setOfferedSkills([...offeredSkills, skill]);
+      setOfferedSkills([...offeredSkills, trimmedSkill]);
     }
     if (type === "wanted" && !wantedSkills.includes(skill)) {
-      setWantedSkills([...wantedSkills, skill]);
+      setWantedSkills([...wantedSkills, trimmedSkill]);
     }
   }
 
@@ -97,9 +135,13 @@ export default function ProfilePage() {
         return;
       }
     }
+    const token = getTokenFromCookie();
     const res = await fetch("/api/profile", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
       body: JSON.stringify({
         name,
         location,
@@ -111,7 +153,8 @@ export default function ProfilePage() {
       }),
     });
     if (!res.ok) {
-      setError("Failed to save profile");
+      const errorData = await res.json().catch(() => ({}));
+      setError(errorData.message || "Failed to save profile");
       setSaving(false);
       return;
     }
@@ -128,8 +171,8 @@ export default function ProfilePage() {
     if (!profile) return;
     setName(profile.name || "");
     setLocation(profile.location || "");
-    setOfferedSkills(profile.offeredSkills?.map((s: any) => s.name) || []);
-    setWantedSkills(profile.wantedSkills?.map((s: any) => s.name) || []);
+    setOfferedSkills(Array.isArray(profile.offeredSkills) ? profile.offeredSkills.map((s: any) => s.skill.name) : []);
+    setWantedSkills(Array.isArray(profile.wantedSkills) ? profile.wantedSkills.map((s: any) => s.skill.name) : []);
     setAvailability(profile.availability || "");
     setIsPublic(profile.isPublic ?? true);
     setProfilePhoto(profile.profilePhoto || null);
@@ -152,12 +195,8 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-black text-white flex flex-col items-center py-8">
       <div className="w-full max-w-2xl bg-[#18181b] rounded-2xl shadow-2xl p-8 relative border border-white/20">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">User profile</h2>
+          <h2 className="text-3xl font-bold">{profile ? "User profile" : "Create Profile"}</h2>
           <div className="flex items-center gap-4">
-            <button onClick={handleSave} disabled={saving} className="text-green-400 font-bold hover:underline">Save</button>
-            <button onClick={handleDiscard} className="text-red-400 font-bold hover:underline">Discard</button>
-            <button className="ml-6 underline">Swap request</button>
-            <button className="ml-2 underline" onClick={() => router.push("/")}>Home</button>
             <div className="ml-4 w-12 h-12 rounded-full overflow-hidden border-2 border-white">
               {profilePhoto || photoPreview ? (
                 <img src={photoPreview || profilePhoto!} alt="Profile" className="w-full h-full object-cover" />
@@ -180,8 +219,8 @@ export default function ProfilePage() {
             <div className="mb-4">
               <label className="block font-semibold mb-1">Skills Offered</label>
               <div className="flex flex-wrap gap-2 mb-2">
-                {offeredSkills.map(skill => (
-                  <span key={skill} className="bg-gray-800 px-3 py-1 rounded-full flex items-center gap-2">
+                {offeredSkills.map((skill, index) => (
+                  <span key={`offered-${skill}-${index}`} className="bg-gray-800 px-3 py-1 rounded-full flex items-center gap-2">
                     {skill}
                     {edit && <button onClick={() => removeSkill(skill, "offered")} className="ml-1 text-red-400">×</button>}
                   </span>
@@ -224,8 +263,8 @@ export default function ProfilePage() {
             <div className="mb-4">
               <label className="block font-semibold mb-1">Skills wanted</label>
               <div className="flex flex-wrap gap-2 mb-2">
-                {wantedSkills.map(skill => (
-                  <span key={skill} className="bg-gray-800 px-3 py-1 rounded-full flex items-center gap-2">
+                {wantedSkills.map((skill, index) => (
+                  <span key={`wanted-${skill}-${index}`} className="bg-gray-800 px-3 py-1 rounded-full flex items-center gap-2">
                     {skill}
                     {edit && <button onClick={() => removeSkill(skill, "wanted")} className="ml-1 text-red-400">×</button>}
                   </span>
@@ -239,13 +278,21 @@ export default function ProfilePage() {
         </div>
         {!edit && (
           <div className="mt-8 text-center">
-            <button onClick={() => setEdit(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">Edit Profile</button>
+            {profile && (
+              <button onClick={() => setEdit(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">
+                Edit Profile
+              </button>
+            )}
           </div>
         )}
         {edit && (
           <div className="mt-8 text-center">
-            <button onClick={handleSave} disabled={saving} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold mr-4">Save</button>
-            <button onClick={handleDiscard} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">Discard</button>
+            <button onClick={handleSave} disabled={saving} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold mr-4">
+              Save
+            </button>
+            {profile && (
+              <button onClick={handleDiscard} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">Discard</button>
+            )}
           </div>
         )}
       </div>
@@ -256,25 +303,90 @@ export default function ProfilePage() {
 // Skill input component for adding tags
 function SkillInput({ onAdd }: { onAdd: (skill: string) => void }) {
   const [value, setValue] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredSkills, setFilteredSkills] = useState<string[]>([]);
+  const [existingSkills, setExistingSkills] = useState<string[]>([]);
+
+  // Fetch existing skills on mount
+  useEffect(() => {
+    fetch("/api/skills")
+      .then(res => res.json())
+      .then(data => {
+        setExistingSkills(data.map((skill: any) => skill.name));
+      })
+      .catch(() => {
+        setExistingSkills([]);
+      });
+  }, []);
+
+  // Filter skills based on input
+  useEffect(() => {
+    if (value.trim()) {
+      const filtered = existingSkills.filter(skill => 
+        skill.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredSkills(filtered);
+      setShowDropdown(filtered.length > 0);
+    } else {
+      setShowDropdown(false);
+    }
+  }, [value, existingSkills]);
+
+  const handleSkillSelect = (skill: string) => {
+    onAdd(skill);
+    setValue("");
+    setShowDropdown(false);
+  };
+
+  const handleCreateNew = () => {
+    if (value.trim() && !existingSkills.includes(value.trim())) {
+      onAdd(value.trim());
+      setValue("");
+      setShowDropdown(false);
+    }
+  };
+
   return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        if (value.trim()) {
-          onAdd(value.trim());
-          setValue("");
-        }
-      }}
-      className="flex gap-2"
-    >
-      <input
-        type="text"
-        value={value}
-        onChange={e => setValue(e.target.value)}
-        className="px-2 py-1 rounded bg-black border border-white/20 text-white"
-        placeholder="Add skill..."
-      />
-      <button type="submit" className="bg-indigo-500 text-white px-3 py-1 rounded">Add</button>
-    </form>
+    <div className="relative">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onFocus={() => setShowDropdown(true)}
+          className="px-2 py-1 rounded bg-black border border-white/20 text-white flex-1"
+          placeholder="Type to search or create skill..."
+        />
+        <button 
+          onClick={handleCreateNew}
+          disabled={!value.trim() || existingSkills.includes(value.trim())}
+          className="bg-indigo-500 text-white px-3 py-1 rounded disabled:opacity-50"
+        >
+          Add
+        </button>
+      </div>
+      
+      {showDropdown && (
+        <div className="absolute top-full left-0 right-0 bg-gray-800 border border-gray-600 rounded-md mt-1 max-h-40 overflow-y-auto z-10">
+          {filteredSkills.map((skill, index) => (
+            <button
+              key={index}
+              onClick={() => handleSkillSelect(skill)}
+              className="w-full text-left px-3 py-2 hover:bg-gray-700 text-white text-sm"
+            >
+              {skill}
+            </button>
+          ))}
+          {value.trim() && !existingSkills.includes(value.trim()) && (
+            <button
+              onClick={handleCreateNew}
+              className="w-full text-left px-3 py-2 hover:bg-gray-700 text-green-400 text-sm border-t border-gray-600"
+            >
+              Create "{value.trim()}"
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
 } 

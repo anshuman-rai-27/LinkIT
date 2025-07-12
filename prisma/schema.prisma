@@ -11,9 +11,9 @@ model User {
   id                 Int                  @id @default(autoincrement())
   email              String               @unique
   password           String
-  verified           Boolean              @default(false)
   createdAt          DateTime             @default(now())
-  profile   Profile?
+  verified           Boolean              @default(false)
+  profile            Profile?
   ResetPasswordToken ResetPasswordToken[]
 }
 
@@ -23,79 +23,85 @@ model ResetPasswordToken {
   token     String   @unique
   createdAt DateTime @default(now())
   expires   DateTime
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)  
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Profile {
-  id           Int      @id @default(autoincrement())
-  name         String?
-  location     String?
-  profilePhoto String?
-  availability String?
-  isPublic     Boolean  @default(true)
-  role         Role     @default(USER)
-  createdAt    DateTime @default(now())
-
-  userId       Int      @unique
-  user         User     @relation(fields: [userId], references: [id])
-
-  offeredSkills    Skill[]         @relation("OfferedSkills")
-  wantedSkills     Skill[]         @relation("WantedSkills")
-  sentRequests     SwapRequest[]   @relation("SentRequests")
-  receivedRequests SwapRequest[]   @relation("ReceivedRequests")
-  feedbacksGiven   Feedback[]      @relation("GivenFeedbacks")
+  id                Int            @id @default(autoincrement())
+  name              String?
+  location          String?
+  profilePhoto      String?
+  availability      String?
+  isPublic          Boolean        @default(true)
+  role              Role           @default(USER)
+  createdAt         DateTime       @default(now())
+  userId            Int            @unique
+  feedbacksGiven    Feedback[]     @relation("GivenFeedbacks")
   feedbacksReceived Feedback[]     @relation("ReceivedFeedbacks")
+  offeredSkills     OfferedSkill[]
+  user              User           @relation(fields: [userId], references: [id])
+  sentRequests      SwapRequest[]  @relation("SentRequests")
+  receivedRequests  SwapRequest[]  @relation("ReceivedRequests")
+  wantedSkills      WantedSkill[]
 }
 
 model Skill {
-  id           Int     @id @default(autoincrement())
-  name         String
-  category     String?
-
-  offeredBy    Profile? @relation("OfferedSkills", fields: [offeredById], references: [id])
-  offeredById  Int?
-
-  wantedBy     Profile? @relation("WantedSkills", fields: [wantedById], references: [id])
-  wantedById   Int?
+  id                Int            @id @default(autoincrement())
+  name              String         @unique
+  category          String?
+  offeredByProfiles OfferedSkill[]
+  wantedByProfiles  WantedSkill[]
 
   @@index([name])
 }
 
+model OfferedSkill {
+  id        Int     @id @default(autoincrement())
+  profileId Int
+  skillId   Int
+  profile   Profile @relation(fields: [profileId], references: [id])
+  skill     Skill   @relation(fields: [skillId], references: [id])
+}
+
+model WantedSkill {
+  id        Int     @id @default(autoincrement())
+  profileId Int
+  skillId   Int
+  profile   Profile @relation(fields: [profileId], references: [id])
+  skill     Skill   @relation(fields: [skillId], references: [id])
+}
+
 model SwapRequest {
-  id             Int      @id @default(autoincrement())
-  fromProfile    Profile  @relation("SentRequests", fields: [fromProfileId], references: [id])
+  id             Int        @id @default(autoincrement())
   fromProfileId  Int
-
-  toProfile      Profile  @relation("ReceivedRequests", fields: [toProfileId], references: [id])
   toProfileId    Int
-
   offeredSkill   String
   requestedSkill String
   status         SwapStatus @default(PENDING)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  fromProfile    Profile    @relation("SentRequests", fields: [fromProfileId], references: [id])
+  toProfile      Profile    @relation("ReceivedRequests", fields: [toProfileId], references: [id])
 }
 
 model Feedback {
-  id          Int     @id @default(autoincrement())
-  fromProfile Profile @relation("GivenFeedbacks", fields: [fromProfileId], references: [id])
+  id            Int      @id @default(autoincrement())
   fromProfileId Int
-
-  toProfile   Profile @relation("ReceivedFeedbacks", fields: [toProfileId], references: [id])
-  toProfileId Int
-
-  rating      Int     // 1 to 5
-  comment     String?
-  createdAt   DateTime @default(now())
+  toProfileId   Int
+  rating        Int
+  comment       String?
+  createdAt     DateTime @default(now())
+  fromProfile   Profile  @relation("GivenFeedbacks", fields: [fromProfileId], references: [id])
+  toProfile     Profile  @relation("ReceivedFeedbacks", fields: [toProfileId], references: [id])
 }
 
 model AdminActionLog {
-  id           Int      @id @default(autoincrement())
-  adminId      Int
-  action       String
-  targetUser   Int?
-  targetSwap   Int?
-  createdAt    DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  adminId    Int
+  action     String
+  targetUser Int?
+  targetSwap Int?
+  createdAt  DateTime @default(now())
 }
 
 enum Role {
