@@ -45,6 +45,7 @@ model Profile {
   sentRequests      SwapRequest[]  @relation("SentRequests")
   receivedRequests  SwapRequest[]  @relation("ReceivedRequests")
   wantedSkills      WantedSkill[]
+  platformMessages  PlatformMessage[]
 }
 
 model Skill {
@@ -119,6 +120,20 @@ model Message {
 
   @@index([senderId, receiverId])
   @@index([timestamp])
+}
+
+model PlatformMessage {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  adminId   Int
+  admin     Profile  @relation(fields: [adminId], references: [id])
+
+  @@index([isActive])
+  @@index([createdAt])
 }
 
 enum Role {
