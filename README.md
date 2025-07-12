@@ -1,3 +1,19 @@
+# LinkIT
+
+## 🚀 Quick Docker Manual Usage
+
+If you want to build and run the app manually (without docker-compose):
+
+```bash
+# Build the Docker image
+docker build -t linkit-app .
+
+# Run the container on port 3000
+docker run -p 3000:3000 --name linkit-dev linkit-app
+```
+
+---
+
 # Odoo Hackathon Problem Statement 1:- Skill Swap Platform
 
 ## Team Details:-
