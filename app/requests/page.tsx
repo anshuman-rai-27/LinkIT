@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import UserProfileCard from '../../components/UserProfileCard';
 import RequestDetailsModal from '../../components/RequestDetailsModal';
 import { FaStar, FaMapMarkerAlt, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
+import { SimpleFooterWithFourGrids } from '../../components/footers/simple-footer-with-four-grids';
 
 // Sample data for requests
 const incomingRequests = [
@@ -748,6 +749,9 @@ export default function RequestsPage() {
           type={activeTab}
         />
       )}
+      
+      {/* Footer */}
+      <SimpleFooterWithFourGrids />
     </main>
   );
 } 

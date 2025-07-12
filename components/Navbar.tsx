@@ -60,10 +60,10 @@ export default function Navbar() {
 
   // Prevent hydration mismatch by showing a consistent initial state
   if (!isMounted) {
-    return (
-      <nav className="w-full flex items-center justify-between px-6 py-4 bg-white shadow-md">
+  return (
+    <nav className="w-full flex items-center justify-between px-6 py-4 bg-white shadow-md">
         <Link href="/" className="text-xl font-bold text-purple-700">LinkIT</Link>
-        <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4">
           <Link
             href="/login"
             className="px-4 py-2 rounded bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 transition"
@@ -84,8 +84,8 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-6">
-            {user ? (
-              <>
+        {user ? (
+          <>
                 {/* Navigation Links */}
                 <div className="flex items-center gap-6">
                   <Link 
@@ -300,12 +300,12 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="space-y-2">
-                <Link
-                  href="/login"
+          <Link
+            href="/login"
                   className="block px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                >
-                  Login
-                </Link>
+          >
+            Login
+          </Link>
                 <Link
                   href="/signup"
                   className="block mx-4 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 transition text-center"
