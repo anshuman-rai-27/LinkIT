@@ -38,6 +38,8 @@ model Profile {
   userId            Int            @unique
   feedbacksGiven    Feedback[]     @relation("GivenFeedbacks")
   feedbacksReceived Feedback[]     @relation("ReceivedFeedbacks")
+  receivedMessages  Message[]      @relation("ReceivedMessages")
+  sentMessages      Message[]      @relation("SentMessages")
   offeredSkills     OfferedSkill[]
   user              User           @relation(fields: [userId], references: [id])
   sentRequests      SwapRequest[]  @relation("SentRequests")
@@ -77,10 +79,10 @@ model SwapRequest {
   toProfileId    Int
   offeredSkill   String
   requestedSkill String
-  message String
   status         SwapStatus @default(PENDING)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  message        String
   fromProfile    Profile    @relation("SentRequests", fields: [fromProfileId], references: [id])
   toProfile      Profile    @relation("ReceivedRequests", fields: [toProfileId], references: [id])
 }
@@ -103,6 +105,20 @@ model AdminActionLog {
   targetUser Int?
   targetSwap Int?
   createdAt  DateTime @default(now())
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  content    String
+  timestamp  DateTime @default(now())
+  read       Boolean  @default(false)
+  receiver   Profile  @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender     Profile  @relation("SentMessages", fields: [senderId], references: [id])
+
+  @@index([senderId, receiverId])
+  @@index([timestamp])
 }
 
 enum Role {
