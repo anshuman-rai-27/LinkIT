@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import UserProfileCard from '../../components/UserProfileCard';
+import RequestModal from '../../components/RequestModal';
 import { FaStar, FaMapMarkerAlt, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
 
 // Sample data for requests
@@ -56,11 +57,164 @@ const incomingRequests = [
     message: "Need help with a machine learning project. Your data science skills would be invaluable.",
     requestedAt: "2024-01-13T09:20:00Z",
   },
+  {
+    id: 4,
+    user: {
+      name: "James Wilson",
+      avatarUrl: "https://randomuser.me/api/portraits/men/67.jpg",
+      initials: "JW",
+      borderColor: "border-blue-400",
+      location: "Seattle",
+      yearsExperience: "8+ years experience",
+      skillsOffered: ["AWS", "Docker", "Kubernetes", "DevOps"],
+      skillsNeeded: ["React", "TypeScript", "Frontend"],
+      rating: 4.7,
+    },
+    status: "pending",
+    message: "Looking for a DevOps engineer to help set up our CI/CD pipeline. Your AWS experience is exactly what we need.",
+    requestedAt: "2024-01-12T14:20:00Z",
+  },
+  {
+    id: 5,
+    user: {
+      name: "Emily Davis",
+      avatarUrl: "https://randomuser.me/api/portraits/women/23.jpg",
+      initials: "ED",
+      borderColor: "border-green-400",
+      location: "Boston",
+      yearsExperience: "4+ years experience",
+      skillsOffered: ["Node.js", "Express", "MongoDB", "REST APIs"],
+      skillsNeeded: ["React", "Frontend", "UI/UX"],
+      rating: 4.6,
+    },
+    status: "accepted",
+    message: "Need a backend developer to help build our API infrastructure. Your Node.js skills are perfect!",
+    requestedAt: "2024-01-11T11:15:00Z",
+  },
+  {
+    id: 6,
+    user: {
+      name: "Michael Brown",
+      avatarUrl: "https://randomuser.me/api/portraits/men/89.jpg",
+      initials: "MB",
+      borderColor: "border-yellow-400",
+      location: "Chicago",
+      yearsExperience: "9+ years experience",
+      skillsOffered: ["Java", "Spring Boot", "Microservices", "Kafka"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.8,
+    },
+    status: "pending",
+    message: "Looking for a Java developer to help with our microservices architecture. Your Spring Boot experience is valuable.",
+    requestedAt: "2024-01-10T16:45:00Z",
+  },
+  {
+    id: 7,
+    user: {
+      name: "Lisa Anderson",
+      avatarUrl: "https://randomuser.me/api/portraits/women/56.jpg",
+      initials: "LA",
+      borderColor: "border-pink-400",
+      location: "Denver",
+      yearsExperience: "6+ years experience",
+      skillsOffered: ["Vue.js", "JavaScript", "CSS", "Webpack"],
+      skillsNeeded: ["Python", "Django", "Backend"],
+      rating: 4.7,
+    },
+    status: "rejected",
+    message: "Need a frontend developer with Vue.js experience. Your portfolio shows great work!",
+    requestedAt: "2024-01-09T13:30:00Z",
+  },
+  {
+    id: 8,
+    user: {
+      name: "Robert Taylor",
+      avatarUrl: "https://randomuser.me/api/portraits/men/45.jpg",
+      initials: "RT",
+      borderColor: "border-indigo-400",
+      location: "Miami",
+      yearsExperience: "7+ years experience",
+      skillsOffered: ["Angular", "TypeScript", "RxJS", "NgRx"],
+      skillsNeeded: ["Node.js", "Express", "Backend"],
+      rating: 4.9,
+    },
+    status: "accepted",
+    message: "Looking for an Angular developer to help with our enterprise application. Your TypeScript skills are impressive.",
+    requestedAt: "2024-01-08T10:20:00Z",
+  },
+  {
+    id: 9,
+    user: {
+      name: "Jennifer Lee",
+      avatarUrl: "https://randomuser.me/api/portraits/women/78.jpg",
+      initials: "JL",
+      borderColor: "border-teal-400",
+      location: "Portland",
+      yearsExperience: "5+ years experience",
+      skillsOffered: ["GraphQL", "Apollo", "React", "TypeScript"],
+      skillsNeeded: ["Python", "FastAPI", "Backend"],
+      rating: 4.6,
+    },
+    status: "pending",
+    message: "Need help with GraphQL implementation. Your Apollo experience would be perfect for our project.",
+    requestedAt: "2024-01-07T15:10:00Z",
+  },
+  {
+    id: 10,
+    user: {
+      name: "David Martinez",
+      avatarUrl: "https://randomuser.me/api/portraits/men/34.jpg",
+      initials: "DM",
+      borderColor: "border-cyan-400",
+      location: "Phoenix",
+      yearsExperience: "8+ years experience",
+      skillsOffered: ["Go", "Docker", "Kubernetes", "gRPC"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.8,
+    },
+    status: "accepted",
+    message: "Looking for a Go developer to help with our microservices. Your gRPC experience is exactly what we need.",
+    requestedAt: "2024-01-06T12:45:00Z",
+  },
+  {
+    id: 11,
+    user: {
+      name: "Amanda White",
+      avatarUrl: "https://randomuser.me/api/portraits/women/91.jpg",
+      initials: "AW",
+      borderColor: "border-rose-400",
+      location: "Nashville",
+      yearsExperience: "4+ years experience",
+      skillsOffered: ["Svelte", "JavaScript", "CSS", "Vite"],
+      skillsNeeded: ["Python", "Django", "Backend"],
+      rating: 4.5,
+    },
+    status: "rejected",
+    message: "Need a Svelte developer for our new project. Your modern frontend skills are impressive!",
+    requestedAt: "2024-01-05T09:30:00Z",
+  },
+  {
+    id: 12,
+    user: {
+      name: "Christopher Clark",
+      avatarUrl: "https://randomuser.me/api/portraits/men/12.jpg",
+      initials: "CC",
+      borderColor: "border-emerald-400",
+      location: "Las Vegas",
+      yearsExperience: "10+ years experience",
+      skillsOffered: ["Rust", "Systems Programming", "C++", "Assembly"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.9,
+    },
+    status: "pending",
+    message: "Looking for a Rust developer for our systems programming project. Your low-level experience is valuable.",
+    requestedAt: "2024-01-04T14:15:00Z",
+  },
 ];
 
 const outgoingRequests = [
   {
-    id: 4,
+    id: 13,
     user: {
       name: "David Kim",
       avatarUrl: "https://randomuser.me/api/portraits/men/45.jpg",
@@ -77,7 +231,7 @@ const outgoingRequests = [
     requestedAt: "2024-01-16T14:15:00Z",
   },
   {
-    id: 5,
+    id: 14,
     user: {
       name: "Emma Wilson",
       avatarUrl: "https://randomuser.me/api/portraits/women/28.jpg",
@@ -92,6 +246,176 @@ const outgoingRequests = [
     status: "accepted",
     message: "Looking for a backend developer to help build our API infrastructure.",
     requestedAt: "2024-01-15T11:00:00Z",
+  },
+  {
+    id: 15,
+    user: {
+      name: "Sophie Chen",
+      avatarUrl: "https://randomuser.me/api/portraits/women/33.jpg",
+      initials: "SC",
+      borderColor: "border-purple-400",
+      location: "Los Angeles",
+      yearsExperience: "6+ years experience",
+      skillsOffered: ["Python", "Django", "PostgreSQL", "Redis"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.8,
+    },
+    status: "rejected",
+    message: "Need a Python developer to help with our Django backend. Your experience is perfect!",
+    requestedAt: "2024-01-14T09:30:00Z",
+  },
+  {
+    id: 16,
+    user: {
+      name: "Ryan Thompson",
+      avatarUrl: "https://randomuser.me/api/portraits/men/67.jpg",
+      initials: "RT",
+      borderColor: "border-orange-400",
+      location: "Austin",
+      yearsExperience: "7+ years experience",
+      skillsOffered: ["React Native", "Mobile Development", "Firebase", "Redux"],
+      skillsNeeded: ["Node.js", "Backend", "API Development"],
+      rating: 4.7,
+    },
+    status: "pending",
+    message: "Looking for a React Native developer for our mobile app. Your mobile experience is valuable.",
+    requestedAt: "2024-01-13T16:45:00Z",
+  },
+  {
+    id: 17,
+    user: {
+      name: "Natalie Rodriguez",
+      avatarUrl: "https://randomuser.me/api/portraits/women/89.jpg",
+      initials: "NR",
+      borderColor: "border-pink-400",
+      location: "San Diego",
+      yearsExperience: "5+ years experience",
+      skillsOffered: ["Vue.js", "Nuxt.js", "Vuetify", "TypeScript"],
+      skillsNeeded: ["Python", "FastAPI", "Backend"],
+      rating: 4.6,
+    },
+    status: "accepted",
+    message: "Need a Vue.js developer to help with our frontend. Your Nuxt.js experience is impressive!",
+    requestedAt: "2024-01-12T13:20:00Z",
+  },
+  {
+    id: 18,
+    user: {
+      name: "Kevin Johnson",
+      avatarUrl: "https://randomuser.me/api/portraits/men/23.jpg",
+      initials: "KJ",
+      borderColor: "border-teal-400",
+      location: "Dallas",
+      yearsExperience: "9+ years experience",
+      skillsOffered: ["C#", ".NET", "Azure", "SQL Server"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.9,
+    },
+    status: "pending",
+    message: "Looking for a .NET developer to help with our enterprise application. Your Azure experience is valuable.",
+    requestedAt: "2024-01-11T10:15:00Z",
+  },
+  {
+    id: 19,
+    user: {
+      name: "Isabella Garcia",
+      avatarUrl: "https://randomuser.me/api/portraits/women/45.jpg",
+      initials: "IG",
+      borderColor: "border-indigo-400",
+      location: "Phoenix",
+      yearsExperience: "4+ years experience",
+      skillsOffered: ["Flutter", "Dart", "Firebase", "Mobile UI"],
+      skillsNeeded: ["Node.js", "Express", "Backend"],
+      rating: 4.5,
+    },
+    status: "rejected",
+    message: "Need a Flutter developer for our cross-platform app. Your mobile development skills are great!",
+    requestedAt: "2024-01-10T14:30:00Z",
+  },
+  {
+    id: 20,
+    user: {
+      name: "Marcus Davis",
+      avatarUrl: "https://randomuser.me/api/portraits/men/78.jpg",
+      initials: "MD",
+      borderColor: "border-cyan-400",
+      location: "Houston",
+      yearsExperience: "8+ years experience",
+      skillsOffered: ["PHP", "Laravel", "MySQL", "Redis"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.8,
+    },
+    status: "accepted",
+    message: "Looking for a Laravel developer to help with our backend. Your PHP experience is perfect!",
+    requestedAt: "2024-01-09T11:45:00Z",
+  },
+  {
+    id: 21,
+    user: {
+      name: "Olivia Taylor",
+      avatarUrl: "https://randomuser.me/api/portraits/women/56.jpg",
+      initials: "OT",
+      borderColor: "border-rose-400",
+      location: "Denver",
+      yearsExperience: "6+ years experience",
+      skillsOffered: ["Svelte", "SvelteKit", "TypeScript", "Tailwind CSS"],
+      skillsNeeded: ["Python", "Django", "Backend"],
+      rating: 4.7,
+    },
+    status: "pending",
+    message: "Need a Svelte developer for our modern frontend. Your SvelteKit experience is impressive!",
+    requestedAt: "2024-01-08T15:20:00Z",
+  },
+  {
+    id: 22,
+    user: {
+      name: "Daniel Lee",
+      avatarUrl: "https://randomuser.me/api/portraits/men/34.jpg",
+      initials: "DL",
+      borderColor: "border-emerald-400",
+      location: "Miami",
+      yearsExperience: "7+ years experience",
+      skillsOffered: ["Ruby", "Rails", "PostgreSQL", "Redis"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.6,
+    },
+    status: "accepted",
+    message: "Looking for a Ruby on Rails developer. Your Rails experience would be perfect for our project.",
+    requestedAt: "2024-01-07T12:10:00Z",
+  },
+  {
+    id: 23,
+    user: {
+      name: "Ava Martinez",
+      avatarUrl: "https://randomuser.me/api/portraits/women/91.jpg",
+      initials: "AM",
+      borderColor: "border-yellow-400",
+      location: "Portland",
+      yearsExperience: "5+ years experience",
+      skillsOffered: ["Elixir", "Phoenix", "PostgreSQL", "WebSocket"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.5,
+    },
+    status: "rejected",
+    message: "Need an Elixir developer for our real-time application. Your Phoenix experience is valuable.",
+    requestedAt: "2024-01-06T09:40:00Z",
+  },
+  {
+    id: 24,
+    user: {
+      name: "Lucas Anderson",
+      avatarUrl: "https://randomuser.me/api/portraits/men/12.jpg",
+      initials: "LA",
+      borderColor: "border-violet-400",
+      location: "Nashville",
+      yearsExperience: "10+ years experience",
+      skillsOffered: ["Scala", "Akka", "Kafka", "Spark"],
+      skillsNeeded: ["React", "JavaScript", "Frontend"],
+      rating: 4.9,
+    },
+    status: "pending",
+    message: "Looking for a Scala developer for our data processing pipeline. Your Akka experience is valuable.",
+    requestedAt: "2024-01-05T13:25:00Z",
   },
 ];
 
@@ -121,94 +445,20 @@ const RequestStatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-// Request Modal Component
-const RequestModal = ({ request, onClose, type }: { 
-  request: typeof incomingRequests[0] | typeof outgoingRequests[0]; 
-  onClose: () => void;
-  type: 'incoming' | 'outgoing';
-}) => {
-  if (!request) return null;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl p-8 w-full max-w-2xl flex flex-col md:flex-row gap-8 relative animate-fadeIn">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
-        
-        {/* Left: User Profile */}
-        <div className="flex flex-col items-center justify-center md:w-1/3 w-full">
-          {request.user.avatarUrl ? (
-            <img src={request.user.avatarUrl} alt={request.user.name} className={`w-32 h-32 rounded-full object-cover border-4 ${request.user.borderColor}`} />
-          ) : (
-            <div className={`w-32 h-32 rounded-full flex items-center justify-center text-3xl font-bold text-white border-4 ${request.user.borderColor} bg-gray-300`}>
-              {request.user.initials}
-            </div>
-          )}
-          <div className="mt-4 text-center">
-            <RequestStatusBadge status={request.status} />
-          </div>
-        </div>
-
-        {/* Right: Request Details */}
-        <div className="flex flex-col justify-center md:w-2/3 w-full gap-4">
-          <div>
-            <span className="font-semibold text-2xl text-gray-900 mb-1">{request.user.name}</span>
-            <span className="flex items-center text-gray-500 text-base mb-2">
-              <FaMapMarkerAlt className="mr-2" />
-              {request.user.location}
-            </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium gap-1 mb-3">
-              {request.user.yearsExperience}
-            </span>
-          </div>
-
-          <div>
-            <div className="text-gray-700 text-sm font-semibold mb-2">Request Message:</div>
-            <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm">
-              {request.message}
-            </div>
-          </div>
-
-          <div className="text-gray-500 text-xs">
-            Requested on: {formatDate(request.requestedAt)}
-          </div>
-
-          <div className="flex items-center gap-3 mt-4">
-            <span className="flex items-center gap-1 text-yellow-500 font-semibold text-lg">
-              <FaStar className="text-lg" />
-              {request.user.rating}
-            </span>
-            {type === 'incoming' && request.status === 'pending' && (
-              <div className="flex gap-2">
-                <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold text-sm shadow transition-all">
-                  Accept
-                </button>
-                <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full font-semibold text-sm shadow transition-all">
-                  Reject
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default function RequestsPage() {
   const [activeTab, setActiveTab] = useState<'incoming' | 'outgoing'>('incoming');
   const [selectedRequest, setSelectedRequest] = useState<typeof incomingRequests[0] | typeof outgoingRequests[0] | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isClient, setIsClient] = useState(false);
+  const itemsPerPage = 6;
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const currentRequests = activeTab === 'incoming' ? incomingRequests : outgoingRequests;
 
@@ -229,30 +479,67 @@ export default function RequestsPage() {
     return matchesSearch && matchesStatus;
   });
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedRequests = filteredRequests.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, activeTab]);
+
+  if (!isClient) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+        <div className="relative z-10 max-w-6xl mx-auto py-8 px-4">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-[#f5f6ff]">
-      <div className="max-w-6xl mx-auto py-8 px-4">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Requests</h1>
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden" suppressHydrationWarning>
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto py-8 px-4">
+        <h1 className="text-5xl font-bold text-center mb-8 text-gray-800 bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+          Requests
+        </h1>
         
         {/* Tab Navigation */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-lg p-1 shadow-md">
+          <div className="backdrop-blur-md bg-white/60 rounded-2xl p-1 shadow-xl border border-white/40">
             <button
+              key="incoming-tab"
               onClick={() => setActiveTab('incoming')}
-              className={`px-6 py-3 rounded-md font-semibold transition-all ${
+              className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
                 activeTab === 'incoming'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
               }`}
             >
               Incoming Requests ({incomingRequests.length})
             </button>
             <button
+              key="outgoing-tab"
               onClick={() => setActiveTab('outgoing')}
-              className={`px-6 py-3 rounded-md font-semibold transition-all ${
+              className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
                 activeTab === 'outgoing'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
               }`}
             >
               Outgoing Requests ({outgoingRequests.length})
@@ -270,10 +557,10 @@ export default function RequestsPage() {
                 placeholder="Search by name, skills, or message..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-4 py-3 pl-12 bg-white/60 backdrop-blur-md border border-white/40 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition-all text-gray-800 placeholder-gray-500"
               />
               <svg
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -288,17 +575,17 @@ export default function RequestsPage() {
             </div>
 
             {/* Status Filter */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <label className="text-sm font-medium text-gray-700">Status:</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-900"
+                className="px-4 py-3 bg-white/60 backdrop-blur-md border border-white/40 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition-all text-gray-800"
               >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="accepted">Accepted</option>
-                <option value="rejected">Rejected</option>
+                <option value="all" className="bg-white">All Status</option>
+                <option value="pending" className="bg-white">Pending</option>
+                <option value="accepted" className="bg-white">Accepted</option>
+                <option value="rejected" className="bg-white">Rejected</option>
               </select>
             </div>
 
@@ -309,7 +596,7 @@ export default function RequestsPage() {
                   setSearchQuery('');
                   setStatusFilter('all');
                 }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                className="px-6 py-3 text-sm text-gray-600 hover:text-gray-800 font-medium transition-colors backdrop-blur-md bg-white/60 rounded-xl border border-white/40 hover:bg-white/80"
               >
                 Clear Filters
               </button>
@@ -317,44 +604,137 @@ export default function RequestsPage() {
           </div>
 
           {/* Results Count */}
-          <div className="text-center mt-4 text-sm text-gray-600">
-            Showing {filteredRequests.length} of {currentRequests.length} requests
+          <div className="text-center mt-6 text-sm text-gray-600">
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredRequests.length)} of {filteredRequests.length} requests
           </div>
         </div>
 
         {/* Requests Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRequests.map((request) => (
-            <div key={request.id} className="relative">
-              <UserProfileCard
-                {...request.user}
-                onClick={() => setSelectedRequest(request)}
-                hideRequestButton={true}
-                status={request.status}
-              />
-            </div>
+          {paginatedRequests.map((request) => (
+            <UserProfileCard
+              key={request.id}
+              {...request.user}
+              status={request.status}
+              hideRequestButton={true}
+              onClick={() => setSelectedRequest(request)}
+            />
           ))}
         </div>
 
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-8">
+            <div className="backdrop-blur-md bg-white/60 rounded-2xl p-2 shadow-xl border border-white/40">
+              <div className="flex items-center gap-2">
+                {/* Previous Button */}
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                    currentPage === 1
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                {/* Page Numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                    // Show first page, last page, current page, and pages around current
+                    const shouldShow = 
+                      page === 1 || 
+                      page === totalPages || 
+                      (page >= currentPage - 1 && page <= currentPage + 1);
+
+                    if (!shouldShow) {
+                      // Show ellipsis if there's a gap
+                      const prevPage = page - 1;
+                      const shouldShowEllipsis = 
+                        prevPage === 1 || 
+                        (prevPage >= currentPage - 1 && prevPage <= currentPage + 1);
+                      
+                      if (!shouldShowEllipsis) {
+                        return null;
+                      }
+                      return (
+                        <span key={`ellipsis-${page}`} className="px-3 py-2 text-gray-500">
+                          ...
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                          page === currentPage
+                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                            : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                    currentPage === totalPages
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Empty State */}
         {filteredRequests.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">
+          <div className="text-center py-16">
+            <div className="text-6xl mb-6 opacity-50">
               {searchQuery || statusFilter !== 'all' ? '🔍' : '📭'}
             </div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+            <h3 className="text-2xl font-semibold text-gray-600 mb-4">
               {searchQuery || statusFilter !== 'all' 
                 ? 'No matching requests found' 
                 : `No ${activeTab} requests`
               }
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 max-w-md mx-auto">
               {searchQuery || statusFilter !== 'all'
                 ? "Try adjusting your search terms or filters."
                 : activeTab === 'incoming' 
                   ? "You haven't received any requests yet." 
                   : "You haven't sent any requests yet."
               }
+            </p>
+          </div>
+        )}
+
+        {/* No Results on Current Page */}
+        {filteredRequests.length > 0 && paginatedRequests.length === 0 && (
+          <div className="text-center py-16">
+            <div className="text-6xl mb-6 opacity-50">📄</div>
+            <h3 className="text-2xl font-semibold text-gray-600 mb-4">
+              No results on this page
+            </h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              Try going back to the first page or adjusting your filters.
             </p>
           </div>
         )}
