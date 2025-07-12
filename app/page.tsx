@@ -2,12 +2,14 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Lightbulb, Trophy, MessageCircle, Shield, Zap, Star, ChevronDown, ChevronUp, Sparkles, CheckCircle, Globe, Heart, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { SimpleFooterWithFourGrids } from "@/components/footers/simple-footer-with-four-grids";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import UserProfileCard from "@/components/UserProfileCard";
 
 interface CommunityDashboardProps {
   className?: string;
@@ -179,7 +181,7 @@ const TestimonialCard = ({
           <div className="absolute bottom-4 left-4 w-8 h-8 bg-gradient-to-br from-purple-200 to-violet-200 rounded-full opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -236,6 +238,8 @@ const StatsCard = ({
 };
 
 export default function Home() {
+  const router = useRouter();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Hero Section */}
@@ -423,57 +427,48 @@ export default function Home() {
           >
             <div className="inline-flex items-center space-x-2 bg-purple-100 px-4 py-2 rounded-full mb-6">
               <Sparkles className="h-4 w-4 text-purple-600" />
-              <span className="text-purple-700 text-sm font-medium">Why Choose LinkIT?</span>
+              <span className="text-purple-700 text-sm font-medium">Explore to Connect</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              Everything You Need to
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Succeed</span>
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-4">
-              Our platform offers cutting-edge features designed to create meaningful connections and accelerate your learning journey.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-            >
-              <FeatureCard
-                icon={Target}
-                title="Smart Matching"
-                description="Our AI-powered algorithm connects you with the perfect mentors and learners based on your skills, goals, and learning preferences."
-                gradient="from-purple-600 to-pink-600"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              <UserProfileCard
+                name="Alex Chen"
+                initials="AC"
+                borderColor="border-orange-400"
+                location="San Francisco"
+                yearsExperience="5+ years experience"
+                skillsOffered={["React", "TypeScript", "Next.js"]}
+                skillsNeeded={["Machine Learning", "Python"]}
+                rating={4.9}
+                avatarUrl="https://randomuser.me/api/portraits/men/32.jpg"
+                onClick={() => router.push('/home')}
               />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <FeatureCard
-                icon={Shield}
-                title="Safe & Secure"
-                description="Your privacy and security are our top priorities. Connect with confidence in our verified community with end-to-end encryption."
-                gradient="from-pink-600 to-purple-600"
+              <UserProfileCard
+                name="Sarah Johnson"
+                initials="SJ"
+                borderColor="border-purple-400"
+                location="New York"
+                yearsExperience="7+ years experience"
+                skillsOffered={["UI Design", "Figma", "Adobe XD"]}
+                skillsNeeded={["Frontend Development", "React"]}
+                rating={4.8}
+                avatarUrl=""
+                onClick={() => router.push('/home')}
               />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              <FeatureCard
-                icon={Zap}
-                title="Instant Learning"
-                description="Start learning immediately with our real-time messaging, video calls, screen sharing, and collaborative tools."
-                gradient="from-purple-600 to-pink-600"
+              <UserProfileCard
+                name="Maria Garcia"
+                initials="MG"
+                borderColor="border-red-400"
+                location="Austin"
+                yearsExperience="6+ years experience"
+                skillsOffered={["Python", "Data Science", "Machine Learning"]}
+                skillsNeeded={["Cloud Computing", "AWS"]}
+                rating={4.9}
+                avatarUrl="https://randomuser.me/api/portraits/women/44.jpg"
+                onClick={() => router.push('/home')}
               />
+            </div>
             </motion.div>
-          </div>
+         
         </div>
       </section>
 
