@@ -3,9 +3,11 @@
 import React from "react";
 import { RoughNotation } from "react-rough-notation";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Lightbulb, Trophy } from "lucide-react";
+import { ArrowRight, Users, Lightbulb, Trophy, MessageCircle, Shield, Zap, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
-// import { CenteredWithLogo } from "@/components/footers/centered-with-logo";
+import { CenteredWithLogo } from "@/components/footers/centered-with-logo";
+import { FooterWithGrid } from "@/components/footers/footer-with-grid";
+import { SimpleFooterWithFourGrids } from "@/components/footers/simple-footer-with-four-grids";
 
 interface CommunityDashboardProps {
   className?: string;
@@ -89,170 +91,459 @@ const CommunityDashboard = ({ className }: CommunityDashboardProps) => {
   );
 };
 
+// FAQ Component
+const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <div className="border-b border-violet-100 last:border-b-0">
+      <button
+        className="flex justify-between items-center w-full py-6 text-left"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="text-lg font-medium text-slate-900">{question}</span>
+        {isOpen ? (
+          <ChevronUp className="h-5 w-5 text-violet-600" />
+        ) : (
+          <ChevronDown className="h-5 w-5 text-violet-600" />
+        )}
+      </button>
+      {isOpen && (
+        <div className="pb-6">
+          <p className="text-slate-600 leading-relaxed">{answer}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Testimonial Component
+const TestimonialCard = ({ 
+  name, 
+  role, 
+  content, 
+  avatar, 
+  rating 
+}: { 
+  name: string; 
+  role: string; 
+  content: string; 
+  avatar: string; 
+  rating: number; 
+}) => {
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-lg border border-violet-100">
+      <div className="flex items-center mb-4">
+        <div className="flex space-x-1 mr-4">
+          {[...Array(rating)].map((_, i) => (
+            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+          ))}
+        </div>
+      </div>
+      <p className="text-slate-600 mb-4 leading-relaxed">"{content}"</p>
+      <div className="flex items-center">
+        <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full mr-3"></div>
+        <div>
+          <div className="font-medium text-slate-900">{name}</div>
+          <div className="text-sm text-slate-500">{role}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   return (
-    <section className="min-h-screen bg-violet-50 overflow-hidden relative">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8b5cf610_1px,transparent_1px),linear-gradient(to_bottom,#8b5cf610_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-      
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-16 h-16 bg-violet-200 rounded-full opacity-60 animate-bounce"></div>
-      <div className="absolute top-1/3 right-20 w-12 h-12 bg-purple-200 rounded-full opacity-40 animate-pulse"></div>
-      <div className="absolute bottom-1/4 left-1/4 w-8 h-8 bg-violet-300 rounded-full opacity-50"></div>
+    <div className="min-h-screen bg-violet-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8b5cf610_1px,transparent_1px),linear-gradient(to_bottom,#8b5cf610_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-16 h-16 bg-violet-200 rounded-full opacity-60 animate-bounce"></div>
+        <div className="absolute top-1/3 right-20 w-12 h-12 bg-purple-200 rounded-full opacity-40 animate-pulse"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-8 h-8 bg-violet-300 rounded-full opacity-50"></div>
 
-      <div className="relative container mx-auto px-4 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div className="space-y-8">
+        <div className="relative container mx-auto px-4 py-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-violet-200 mb-6">
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
+                    <span className="text-violet-700 text-sm font-medium">LinkIT Community Platform</span>
+                  </div>
+                  <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-violet-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+
+                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                  <span className="text-slate-900">Connect, Learn, </span>
+                  <RoughNotation
+                    type="highlight"
+                    show={true}
+                    color="#8b5cf6"
+                    animationDelay={1000}
+                    animationDuration={2000}
+                    multiline
+                  >
+                    <span className="text-slate-900">Grow Together</span>
+                  </RoughNotation>
+                </h1>
+
+                <p className="text-xl text-slate-600 leading-relaxed">
+                  Join thousands of learners sharing skills, finding mentors, and building meaningful connections in our vibrant community platform.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
+                <Button 
+                  size="lg" 
+                  className="bg-violet-500 hover:bg-violet-600 text-white px-8 py-4 text-lg group transition-all duration-300"
+                >
+                  Start Learning Today
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-violet-300 text-violet-700 hover:bg-violet-50 px-8 py-4 text-lg"
+                >
+                  Explore Community
+                </Button>
+              </motion.div>
+
+              {/* Stats */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="grid grid-cols-3 gap-6 pt-8 border-t border-violet-200"
+              >
+                <div className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-violet-100 rounded-full mb-2 mx-auto">
+                    <Users className="h-6 w-6 text-violet-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-slate-900">12K+</div>
+                  <div className="text-sm text-slate-600">Active Members</div>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-2 mx-auto">
+                    <Lightbulb className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-slate-900">500+</div>
+                  <div className="text-sm text-slate-600">Skills Shared</div>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-violet-100 rounded-full mb-2 mx-auto">
+                    <Trophy className="h-6 w-6 text-violet-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-slate-900">95%</div>
+                  <div className="text-sm text-slate-600">Success Rate</div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right Content - Mobile Mockup */}
+            <div className="relative lg:pl-8">
+              <motion.div
+                initial={{ opacity: 0, x: 30, rotateY: -15 }}
+                animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
+                className="relative"
+              >
+                {/* Phone Frame */}
+                <div className="relative mx-auto w-72 h-[600px] bg-slate-900 rounded-[2.5rem] p-2 shadow-2xl">
+                  <div className="w-full h-full bg-white rounded-[2rem] overflow-hidden relative">
+                    {/* Notch */}
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl"></div>
+                    
+                    {/* Content */}
+                    <div className="pt-8 h-full">
+                      <CommunityDashboard />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Cards */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                  className="absolute -left-8 top-20 bg-white p-4 rounded-xl shadow-lg border border-violet-100"
+                >
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center">
+                      <span className="text-violet-600 text-sm">🎯</span>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-slate-900">Skill Match</div>
+                      <div className="text-xs text-slate-500">95% compatibility</div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 1.0 }}
+                  className="absolute -right-8 bottom-32 bg-white p-4 rounded-xl shadow-lg border border-purple-100"
+                >
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-purple-600 text-sm">⚡</span>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-slate-900">Quick Connect</div>
+                      <div className="text-xs text-slate-500">Instant messaging</div>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Why Choose LinkIT?
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Our platform offers everything you need to connect, learn, and grow with like-minded individuals.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-center p-6"
             >
-              <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-violet-200 mb-6">
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
-                  <span className="text-violet-700 text-sm font-medium">LinkIT Community Platform</span>
-                </div>
-                <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center">
-                  <svg className="w-3 h-3 text-violet-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
-                  </svg>
-                </div>
+              <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <MessageCircle className="h-8 w-8 text-violet-600" />
               </div>
-
-              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                <span className="text-slate-900">Connect, Learn, </span>
-                <RoughNotation
-                  type="highlight"
-                  show={true}
-                  color="#8b5cf6"
-                  animationDelay={1000}
-                  animationDuration={2000}
-                  multiline
-                >
-                  <span className="text-slate-900">Grow Together</span>
-                </RoughNotation>
-              </h1>
-
-              <p className="text-xl text-slate-600 leading-relaxed">
-                Join thousands of learners sharing skills, finding mentors, and building meaningful connections in our vibrant community platform.
+              <h3 className="text-xl font-semibold text-slate-900 mb-4">Smart Matching</h3>
+              <p className="text-slate-600">
+                Our AI-powered algorithm connects you with the perfect mentors and learners based on your skills and goals.
               </p>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4"
+              viewport={{ once: true }}
+              className="text-center p-6"
             >
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Shield className="h-8 w-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-900 mb-4">Safe & Secure</h3>
+              <p className="text-slate-600">
+                Your privacy and security are our top priorities. Connect with confidence in our verified community.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="text-center p-6"
+            >
+              <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Zap className="h-8 w-8 text-violet-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-900 mb-4">Instant Learning</h3>
+              <p className="text-slate-600">
+                Start learning immediately with our real-time messaging, video calls, and collaborative tools.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-violet-50">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              What Our Community Says
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Join thousands of satisfied learners who have transformed their skills through LinkIT.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <TestimonialCard
+                name="Sarah Chen"
+                role="React Developer"
+                content="LinkIT helped me find the perfect mentor for React development. The community is incredibly supportive and I've learned so much in just a few months."
+                avatar="/avatar1.jpg"
+                rating={5}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <TestimonialCard
+                name="Alex Kumar"
+                role="UI/UX Designer"
+                content="The skill matching algorithm is amazing! I connected with designers who shared exactly what I needed to learn. Highly recommended!"
+                avatar="/avatar2.jpg"
+                rating={5}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <TestimonialCard
+                name="Maria Rodriguez"
+                role="Python Developer"
+                content="I've been teaching Python on LinkIT for over a year now. The platform makes it so easy to connect with eager learners and share knowledge."
+                avatar="/avatar3.jpg"
+                rating={5}
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Everything you need to know about LinkIT and how to get started.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto"
+          >
+            <div className="bg-violet-50 rounded-2xl p-8">
+              <FAQItem
+                question="How does the skill matching work?"
+                answer="Our AI algorithm analyzes your profile, skills, and learning goals to connect you with the most compatible mentors and learners in our community."
+              />
+              <FAQItem
+                question="Is LinkIT free to use?"
+                answer="Yes! LinkIT offers a free tier with access to basic features. We also offer premium plans with advanced features and unlimited connections."
+              />
+              <FAQItem
+                question="How do I verify my skills?"
+                answer="You can verify your skills through our assessment system, portfolio uploads, or by getting endorsements from other community members."
+              />
+              <FAQItem
+                question="Can I teach and learn at the same time?"
+                answer="Absolutely! Many of our members both teach skills they're expert in and learn new skills from others. It's a two-way learning experience."
+              />
+              <FAQItem
+                question="What if I don't find a good match?"
+                answer="Our matching system continuously learns and improves. If you don't find a good match initially, we'll keep looking and notify you when better matches become available."
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-violet-500 to-purple-600">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Ready to Start Your Learning Journey?
+            </h2>
+            <p className="text-xl text-violet-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of learners and mentors who are already transforming their skills and building meaningful connections.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
-                className="bg-violet-500 hover:bg-violet-600 text-white px-8 py-4 text-lg group transition-all duration-300"
+                className="bg-white text-violet-600 hover:bg-violet-50 px-8 py-4 text-lg"
               >
-                Start Learning Today
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                Get Started Free
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="border-violet-300 text-violet-700 hover:bg-violet-50 px-8 py-4 text-lg"
+                className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg"
               >
-                Explore Community
+                Learn More
               </Button>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="grid grid-cols-3 gap-6 pt-8 border-t border-violet-200"
-            >
-              <div className="text-center">
-                <div className="flex items-center justify-center w-12 h-12 bg-violet-100 rounded-full mb-2 mx-auto">
-                  <Users className="h-6 w-6 text-violet-600" />
-                </div>
-                <div className="text-2xl font-bold text-slate-900">12K+</div>
-                <div className="text-sm text-slate-600">Active Members</div>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-2 mx-auto">
-                  <Lightbulb className="h-6 w-6 text-purple-600" />
-                </div>
-                <div className="text-2xl font-bold text-slate-900">500+</div>
-                <div className="text-sm text-slate-600">Skills Shared</div>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center w-12 h-12 bg-violet-100 rounded-full mb-2 mx-auto">
-                  <Trophy className="h-6 w-6 text-violet-600" />
-                </div>
-                <div className="text-2xl font-bold text-slate-900">95%</div>
-                <div className="text-sm text-slate-600">Success Rate</div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Right Content - Mobile Mockup */}
-          <div className="relative lg:pl-8">
-            <motion.div
-              initial={{ opacity: 0, x: 30, rotateY: -15 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="relative"
-            >
-              {/* Phone Frame */}
-              <div className="relative mx-auto w-72 h-[600px] bg-slate-900 rounded-[2.5rem] p-2 shadow-2xl">
-                <div className="w-full h-full bg-white rounded-[2rem] overflow-hidden relative">
-                  {/* Notch */}
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl"></div>
-                  
-                  {/* Content */}
-                  <div className="pt-8 h-full">
-                    <CommunityDashboard />
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Cards */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
-                className="absolute -left-8 top-20 bg-white p-4 rounded-xl shadow-lg border border-violet-100"
-              >
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center">
-                    <span className="text-violet-600 text-sm">🎯</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-slate-900">Skill Match</div>
-                    <div className="text-xs text-slate-500">95% compatibility</div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 1.0 }}
-                className="absolute -right-8 bottom-32 bg-white p-4 rounded-xl shadow-lg border border-purple-100"
-              >
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                    <span className="text-purple-600 text-sm">⚡</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-slate-900">Quick Connect</div>
-                    <div className="text-xs text-slate-500">Instant messaging</div>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
-      {/* <CenteredWithLogo /> */}
-    </section>
+      </section>
+
+      {/* Footer */}
+      <SimpleFooterWithFourGrids />
+    </div>
   );
 }
