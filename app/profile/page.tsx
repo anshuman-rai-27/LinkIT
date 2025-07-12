@@ -56,7 +56,6 @@ export default function ProfilePage() {
       })
       .then(data => {
         if (data) {
-          console.log(data,data.wantedSkills[0].skill.name);
           setProfile(data);
           setName(data.name || "");
           setLocation(data.location || "");
@@ -68,7 +67,8 @@ export default function ProfilePage() {
         }
         setLoading(false);
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error(e)
         setError("Failed to load profile. Please make sure you are logged in.");
         setLoading(false);
       });
