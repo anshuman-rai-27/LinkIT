@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../prisma';
-// @ts-ignore
 import bcrypt from 'bcryptjs';
 import { signToken } from '../../../../lib/jwt';
 

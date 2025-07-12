@@ -46,14 +46,8 @@ export default function SignupPage() {
         return;
       }
       
-      if (data.token) {
-        setSession(data.token);
-        router.push("/");
-        router.refresh();
-      } else {
         setSuccess(true);
         setTimeout(() => router.push("/login"), 1500);
-      }
     } catch (fetchError) {
       console.error('Fetch error:', fetchError);
       setError("Network error. Please check your connection and try again.");
