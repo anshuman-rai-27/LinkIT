@@ -4,6 +4,22 @@ import { useRouter } from "next/navigation";
 
 const AVAILABILITY_OPTIONS = ["weekdays", "weekends", "evenings", "mornings"];
 
+function UserIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+  );
+}
+
+function XMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  );
+}
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -67,8 +83,7 @@ export default function ProfilePage() {
         }
         setLoading(false);
       })
-      .catch((e) => {
-        console.error(e)
+      .catch(() => {
         setError("Failed to load profile. Please make sure you are logged in.");
         setLoading(false);
       });
@@ -160,6 +175,7 @@ export default function ProfilePage() {
     }
     const data = await res.json();
     setProfile(data);
+    setProfilePhoto(data.profilePhoto || null);
     setEdit(false);
     setPhotoFile(null);
     setPhotoPreview(null);
@@ -192,106 +208,188 @@ export default function ProfilePage() {
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center py-8">
-      <div className="w-full max-w-2xl bg-[#18181b] rounded-2xl shadow-2xl p-8 relative border border-white/20">
+    <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col items-center py-8">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-md p-6 relative border border-gray-200">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">{profile ? "User profile" : "Create Profile"}</h2>
+          <h2 className="text-2xl font-semibold">{profile ? "User Profile" : "Create Profile"}</h2>
           <div className="flex items-center gap-4">
-            <div className="ml-4 w-12 h-12 rounded-full overflow-hidden border-2 border-white">
+            <div className="ml-4 w-12 h-12 rounded-full overflow-hidden border border-gray-300">
               {profilePhoto || photoPreview ? (
                 <img src={photoPreview || profilePhoto!} alt="Profile" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gray-700 flex items-center justify-center text-2xl">?</div>
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center text-xl text-gray-400">?</div>
               )}
             </div>
           </div>
         </div>
+        
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex-1">
+            {/* Name Field */}
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 rounded bg-black border border-white/20 text-white" disabled={!edit} />
+              <label className="block text-sm font-medium mb-1 text-gray-700">Full Name</label>
+              <input 
+                type="text" 
+                value={name} 
+                onChange={e => setName(e.target.value)} 
+                className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                disabled={!edit} 
+              />
             </div>
+            
+            {/* Location Field */}
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Location</label>
-              <input type="text" value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2 rounded bg-black border border-white/20 text-white" disabled={!edit} />
+              <label className="block text-sm font-medium mb-1 text-gray-700">Location</label>
+              <input 
+                type="text" 
+                value={location} 
+                onChange={e => setLocation(e.target.value)} 
+                className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                disabled={!edit} 
+              />
             </div>
+            
+            {/* Skills Offered */}
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Skills Offered</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Skills You Offer</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {offeredSkills.map((skill, index) => (
-                  <span key={`offered-${skill}-${index}`} className="bg-gray-800 px-3 py-1 rounded-full flex items-center gap-2">
+                  <span 
+                    key={`offered-${skill}-${index}`} 
+                    className="bg-gray-100 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-gray-200"
+                  >
                     {skill}
-                    {edit && <button onClick={() => removeSkill(skill, "offered")} className="ml-1 text-red-400">×</button>}
+                    {edit && (
+                      <button 
+                        onClick={() => removeSkill(skill, "offered")} 
+                        className="ml-1 text-gray-500 hover:text-red-500"
+                      >
+                        ×
+                      </button>
+                    )}
                   </span>
                 ))}
               </div>
-              {edit && (
-                <SkillInput onAdd={skill => addSkill(skill, "offered")}/>
-              )}
+              {edit && <SkillInput onAdd={skill => addSkill(skill, "offered")}/>} 
             </div>
+            
+            {/* Availability */}
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Availability</label>
-              <select value={availability} onChange={e => setAvailability(e.target.value)} className="w-full px-3 py-2 rounded bg-black border border-white/20 text-white" disabled={!edit}>
-                <option value="">Select...</option>
-                {AVAILABILITY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+              <label className="block text-sm font-medium mb-1 text-gray-700">Availability</label>
+              <select 
+                value={availability} 
+                onChange={e => setAvailability(e.target.value)} 
+                className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                disabled={!edit}
+              >
+                <option value="">Select your availability...</option>
+                {AVAILABILITY_OPTIONS.map(opt => 
+                  <option key={opt} value={opt}>{opt}</option>
+                )}
               </select>
             </div>
+            
+            {/* Profile Visibility */}
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Profile</label>
-              <select value={isPublic ? "public" : "private"} onChange={e => setIsPublic(e.target.value === "public")} className="w-full px-3 py-2 rounded bg-black border border-white/20 text-white" disabled={!edit}>
-                <option value="public">Public</option>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Profile Visibility</label>
+              <select 
+                value={isPublic ? "public" : "private"} 
+                onChange={e => setIsPublic(e.target.value === "public")} 
+                className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                disabled={!edit}
+              >
+                <option value="public">Public - Anyone can see your profile</option>
                 <option value="private">Private</option>
               </select>
             </div>
           </div>
+          
           <div className="flex-1 flex flex-col items-center">
-            <div className="mb-4 w-40 h-40 rounded-full border-4 border-white flex items-center justify-center overflow-hidden relative">
+            {/* Profile Photo */}
+            <div className="mb-4 w-40 h-40 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative bg-gray-50">
               {photoPreview || profilePhoto ? (
                 <img src={photoPreview || profilePhoto!} alt="Profile" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gray-700 flex items-center justify-center text-5xl">?</div>
+                <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                  <UserIcon className="w-12 h-12" />
+                  <span className="text-xs mt-2">Add Photo</span>
+                </div>
               )}
               {edit && (
                 <>
                   <input type="file" accept="image/*" ref={fileInputRef} onChange={handlePhotoChange} className="hidden" />
-                  <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-2 left-2 bg-white/80 text-black px-2 py-1 rounded text-xs">Add/Edit</button>
-                  {(photoPreview || profilePhoto) && <button onClick={handleRemovePhoto} className="absolute bottom-2 right-2 text-red-500 text-xs underline">Remove</button>}
+                  <button 
+                    onClick={() => fileInputRef.current?.click()} 
+                    className="absolute inset-0 w-full h-full opacity-0 hover:opacity-100 bg-black bg-opacity-20 text-white text-sm transition-opacity"
+                  >
+                    Change
+                  </button>
+                  {(photoPreview || profilePhoto) && (
+                    <button 
+                      onClick={handleRemovePhoto} 
+                      className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-sm text-gray-500 hover:text-red-500"
+                    >
+                      <XMarkIcon className="w-4 h-4" />
+                    </button>
+                  )}
                 </>
               )}
             </div>
-            <div className="mb-4">
-              <label className="block font-semibold mb-1">Skills wanted</label>
+            
+            {/* Skills Wanted */}
+            <div className="mb-4 w-full">
+              <label className="block text-sm font-medium mb-1 text-gray-700">Skills You Want to Learn</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {wantedSkills.map((skill, index) => (
-                  <span key={`wanted-${skill}-${index}`} className="bg-gray-800 px-3 py-1 rounded-full flex items-center gap-2">
+                  <span 
+                    key={`wanted-${skill}-${index}`} 
+                    className="bg-gray-100 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-gray-200"
+                  >
                     {skill}
-                    {edit && <button onClick={() => removeSkill(skill, "wanted")} className="ml-1 text-red-400">×</button>}
+                    {edit && (
+                      <button 
+                        onClick={() => removeSkill(skill, "wanted")} 
+                        className="ml-1 text-gray-500 hover:text-red-500"
+                      >
+                        ×
+                      </button>
+                    )}
                   </span>
                 ))}
               </div>
-              {edit && (
-                <SkillInput onAdd={skill => addSkill(skill, "wanted")}/>
-              )}
+              {edit && <SkillInput onAdd={skill => addSkill(skill, "wanted")}/>} 
             </div>
           </div>
         </div>
-        {!edit && (
+        
+        {/* Action Buttons */}
+        {!edit ? (
           <div className="mt-8 text-center">
             {profile && (
-              <button onClick={() => setEdit(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">
+              <button 
+                onClick={() => setEdit(true)} 
+                className="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              >
                 Edit Profile
               </button>
             )}
           </div>
-        )}
-        {edit && (
-          <div className="mt-8 text-center">
-            <button onClick={handleSave} disabled={saving} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold mr-4">
-              Save
+        ) : (
+          <div className="mt-8 text-center space-x-4">
+            <button 
+              onClick={handleSave} 
+              disabled={saving}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50 transition-colors"
+            >
+              {saving ? "Saving..." : "Save"}
             </button>
             {profile && (
-              <button onClick={handleDiscard} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">Discard</button>
+              <button 
+                onClick={handleDiscard} 
+                className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+              >
+                Discard
+              </button>
             )}
           </div>
         )}
