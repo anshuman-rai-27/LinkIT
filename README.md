@@ -1,3 +1,17 @@
+# Odoo Hackathon Problem Statement 1:- Skill Swap Platform
+
+## Team Details:-
+
+**Team Members’ Emails:**  
+- [mayank.m.nita@gmail.com]  
+- [priyanshudas01@gmail.com]  
+- [anshumanrishi27@gmail.com]  
+- [edantuti@gmail.com]
+
+---
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
