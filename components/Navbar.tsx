@@ -172,6 +172,13 @@ export default function Navbar() {
                           <User className="h-4 w-4" />
                           Profile
                         </Link>
+                        <Link
+                          href="/admin"
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                        >
+                          <Settings className="h-4 w-4" />
+                          Admin Panel
+                        </Link>
                         <button
                           onClick={handleLogout}
                           className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors w-full text-left"
