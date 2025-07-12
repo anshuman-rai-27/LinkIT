@@ -1,107 +1,62 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { FaStar, FaMapMarkerAlt, FaArrowLeft, FaUser, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
 import RequestModal from '../../../components/RequestModal';
-
-// Sample user data - in a real app, this would come from an API
-const userData = {
-  "alex-chen": {
-    name: "Alex Chen",
-    avatarUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-    initials: "AC",
-    borderColor: "border-orange-400",
-    location: "San Francisco",
-    yearsExperience: "5+ years experience",
-    skillsOffered: ["React", "TypeScript", "Next.js", "Redux", "Node.js", "Express"],
-    skillsNeeded: ["Machine Learning", "Python", "Go", "Docker"],
-    rating: 4.9,
-    bio: "Frontend developer with a passion for creating intuitive user experiences. I specialize in React and TypeScript, and I'm always eager to learn new technologies. Currently working on a large-scale e-commerce platform.",
-    projects: [
-      {
-        name: "E-commerce Platform",
-        description: "Built a full-stack e-commerce solution using React, Node.js, and MongoDB",
-        tech: ["React", "Node.js", "MongoDB", "Stripe"]
-      },
-      {
-        name: "Task Management App",
-        description: "Developed a collaborative task management application with real-time updates",
-        tech: ["React", "Socket.io", "Express", "PostgreSQL"]
-      }
-    ],
-    availability: "Available for mentoring and collaboration",
-    timezone: "PST (UTC-8)",
-    languages: ["English", "Mandarin"]
-  },
-  "sarah-johnson": {
-    name: "Sarah Johnson",
-    avatarUrl: "",
-    initials: "SJ",
-    borderColor: "border-purple-400",
-    location: "New York",
-    yearsExperience: "7+ years experience",
-    skillsOffered: ["UI Design", "Figma", "Adobe XD", "Sketch", "Prototyping", "User Research"],
-    skillsNeeded: ["Frontend Development", "React", "Vue.js", "JavaScript"],
-    rating: 4.8,
-    bio: "Senior UI/UX designer with expertise in creating beautiful and functional interfaces. I've worked with startups and enterprise companies, helping them build products that users love.",
-    projects: [
-      {
-        name: "Mobile Banking App",
-        description: "Redesigned the user interface for a major banking application",
-        tech: ["Figma", "Sketch", "InVision", "Principle"]
-      },
-      {
-        name: "E-learning Platform",
-        description: "Created the complete design system and user experience for an online learning platform",
-        tech: ["Figma", "Adobe XD", "Lottie", "After Effects"]
-      }
-    ],
-    availability: "Available for design consultations and mentorship",
-    timezone: "EST (UTC-5)",
-    languages: ["English", "Spanish"]
-  },
-  "maria-garcia": {
-    name: "Maria Garcia",
-    avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-    initials: "MG",
-    borderColor: "border-red-400",
-    location: "Austin",
-    yearsExperience: "6+ years experience",
-    skillsOffered: ["Python", "Data Science", "Machine Learning", "R", "TensorFlow", "Pandas"],
-    skillsNeeded: ["Cloud Computing", "AWS", "Azure", "Docker"],
-    rating: 4.9,
-    bio: "Data scientist and machine learning engineer with a background in statistics and computer science. I love solving complex problems and building predictive models that drive business value.",
-    projects: [
-      {
-        name: "Recommendation Engine",
-        description: "Built a recommendation system that increased user engagement by 40%",
-        tech: ["Python", "TensorFlow", "Pandas", "Scikit-learn"]
-      },
-      {
-        name: "Fraud Detection System",
-        description: "Developed an ML model to detect fraudulent transactions in real-time",
-        tech: ["Python", "AWS", "SageMaker", "Docker"]
-      }
-    ],
-    availability: "Available for data science projects and mentoring",
-    timezone: "CST (UTC-6)",
-    languages: ["English", "Spanish", "Portuguese"]
-  }
-};
+import RatingModal from '../../../components/RatingModal';
 
 export default function UserDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const userId = params.id as string;
-  const user = userData[userId as keyof typeof userData];
 
-  if (!user) {
+  useEffect(() => {
+    if (userId) {
+      fetch(`/api/users/${userId}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data && Object.keys(data).length > 0) {
+            setUser(data);
+          } else {
+            setError('User not found');
+          }
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching user:', error);
+          setError('Failed to load user profile');
+          setLoading(false);
+        });
+    }
+  }, [userId]);
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">User not found</h1>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <h1 className="text-2xl font-bold text-gray-800">Loading profile...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">{error || 'User not found'}</h1>
           <button
             onClick={() => router.back()}
             className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
@@ -192,7 +147,7 @@ export default function UserDetailsPage() {
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Languages</h3>
                     <div className="flex flex-wrap gap-2">
-                      {user.languages.map((language, idx) => (
+                      {user.languages.map((language: string, idx: number) => (
                         <span key={idx} className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">
                           {language}
                         </span>
@@ -200,13 +155,23 @@ export default function UserDetailsPage() {
                     </div>
                   </div>
 
-                  {/* Request Button */}
-                  <button
-                    onClick={() => setShowRequestModal(true)}
-                    className="w-full px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold text-lg shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
-                  >
-                    <span>Send Connection Request</span>
-                  </button>
+                  {/* Action Buttons */}
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setShowRequestModal(true)}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold text-lg shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                    >
+                      <span>Send Connection Request</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => setShowRatingModal(true)}
+                      className="w-full px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl font-semibold text-base shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                    >
+                      <FaStar className="h-4 w-4" />
+                      <span>Rate & Review</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -219,7 +184,7 @@ export default function UserDetailsPage() {
                 <div className="relative backdrop-blur-md bg-white/60 border border-white/40 rounded-2xl shadow-xl p-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">Skills Offered</h2>
                   <div className="flex flex-wrap gap-3">
-                    {user.skillsOffered.map((skill, idx) => (
+                    {user.skillsOffered.map((skill: string, idx: number) => (
                       <span key={idx} className="px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium">
                         {skill}
                       </span>
@@ -234,7 +199,7 @@ export default function UserDetailsPage() {
                 <div className="relative backdrop-blur-md bg-white/60 border border-white/40 rounded-2xl shadow-xl p-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">Skills Looking For</h2>
                   <div className="flex flex-wrap gap-3">
-                    {user.skillsNeeded.map((skill, idx) => (
+                    {user.skillsNeeded.map((skill: string, idx: number) => (
                       <span key={idx} className="px-4 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">
                         {skill}
                       </span>
@@ -249,12 +214,12 @@ export default function UserDetailsPage() {
                 <div className="relative backdrop-blur-md bg-white/60 border border-white/40 rounded-2xl shadow-xl p-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">Recent Projects</h2>
                   <div className="space-y-6">
-                    {user.projects.map((project, idx) => (
+                    {user.projects.map((project: any, idx: number) => (
                       <div key={idx} className="border border-gray-200 rounded-xl p-6 bg-white/50">
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">{project.name}</h3>
                         <p className="text-gray-700 mb-4">{project.description}</p>
                         <div className="flex flex-wrap gap-2">
-                          {project.tech.map((tech, techIdx) => (
+                          {project.tech.map((tech: string, techIdx: number) => (
                             <span key={techIdx} className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-medium">
                               {tech}
                             </span>
@@ -275,6 +240,14 @@ export default function UserDetailsPage() {
         <RequestModal 
           profile={user} 
           onClose={() => setShowRequestModal(false)} 
+        />
+      )}
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <RatingModal 
+          profile={user} 
+          onClose={() => setShowRatingModal(false)} 
         />
       )}
     </div>

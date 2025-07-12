@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaStar, FaMapMarkerAlt, FaClock, FaCheck, FaTimes, FaUser } from 'react-icons/fa';
+import { getSessionToken } from '../lib/session';
 
 interface RequestDetailsModalProps {
   request: {
     id: number;
     user: {
+      id: string;
       name: string;
       avatarUrl?: string;
       initials: string;
@@ -15,17 +17,24 @@ interface RequestDetailsModalProps {
       skillsOffered: string[];
       skillsNeeded: string[];
       rating: number;
+      email: string;
     };
     status: string;
     message: string;
+    offeredSkill: string;
+    requestedSkill: string;
     requestedAt: string;
+    isIncoming: boolean;
   };
   onClose: () => void;
   type: 'incoming' | 'outgoing';
+  onRequestUpdate?: () => void;
 }
 
-const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onClose, type }) => {
+const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onClose, type, onRequestUpdate }) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   if (!request) return null;
 
@@ -47,8 +56,50 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
         return { color: 'bg-green-100 text-green-700', icon: FaCheck, text: 'Accepted' };
       case 'rejected':
         return { color: 'bg-red-100 text-red-700', icon: FaTimes, text: 'Rejected' };
+      case 'cancelled':
+        return { color: 'bg-gray-100 text-gray-700', icon: FaTimes, text: 'Cancelled' };
       default:
         return { color: 'bg-gray-100 text-gray-600', icon: FaClock, text: 'Unknown' };
+    }
+  };
+
+  const handleRequestAction = async (action: 'ACCEPTED' | 'REJECTED' | 'CANCELLED') => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const token = getSessionToken();
+      if (!token) {
+        setError('You must be logged in to perform this action');
+        return;
+      }
+
+      const response = await fetch(`/api/request/${request.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: action })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update request');
+      }
+
+      // Call the callback to refresh the requests list
+      if (onRequestUpdate) {
+        onRequestUpdate();
+      }
+
+      // Close the modal
+      onClose();
+    } catch (error) {
+      console.error('Error updating request:', error);
+      setError(error instanceof Error ? error.message : 'Failed to update request');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,6 +179,25 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
               </div>
             </div>
 
+            {/* Skills Exchange */}
+            <div>
+              <h3 className="text-gray-800 text-lg font-semibold mb-3">Skills Exchange</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-green-50 p-4 rounded-xl">
+                  <h4 className="text-green-800 font-semibold mb-2">Offering</h4>
+                  <span className="px-3 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                    {request.offeredSkill}
+                  </span>
+                </div>
+                <div className="bg-orange-50 p-4 rounded-xl">
+                  <h4 className="text-orange-800 font-semibold mb-2">Requesting</h4>
+                  <span className="px-3 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">
+                    {request.requestedSkill}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {/* Skills Offered */}
             <div>
               <h3 className="text-gray-800 text-lg font-semibold mb-3">Skills Offered</h3>
@@ -157,12 +227,61 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
               Requested on: {formatDate(request.requestedAt)}
             </div>
 
+            {/* Error message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+
             {/* Action buttons */}
-            <div className="flex flex-col items-center gap-4 mt-6 pt-6 border-t border-gray-200">
+            <div className="flex items-center gap-4 mt-6 pt-6 border-t border-gray-200">
+              {type === 'incoming' && request.status === 'pending' && (
+                <>
+                  <button 
+                    onClick={() => handleRequestAction('ACCEPTED')}
+                    disabled={loading}
+                    className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center gap-2"
+                  >
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <FaCheck className="h-4 w-4" />
+                    )}
+                    Accept
+                  </button>
+                  <button 
+                    onClick={() => handleRequestAction('REJECTED')}
+                    disabled={loading}
+                    className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center gap-2"
+                  >
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <FaTimes className="h-4 w-4" />
+                    )}
+                    Reject
+                  </button>
+                </>
+              )}
+              {type === 'outgoing' && request.status === 'pending' && (
+                <button 
+                  onClick={() => handleRequestAction('CANCELLED')}
+                  disabled={loading}
+                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center gap-2"
+                >
+                  {loading ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    <FaTimes className="h-4 w-4" />
+                  )}
+                  Cancel
+                </button>
+              )}
               <button 
                 onClick={() => {
                   onClose();
-                  router.push(`/userdetails/${getUserDetailsId(request.user.name)}`);
+                  router.push(`/userdetails/${request.user.id}`);
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center gap-2"
               >
