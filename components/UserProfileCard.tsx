@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaStar, FaMapMarkerAlt, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
 
 interface UserProfileCardProps {
   name: string;
@@ -12,6 +12,8 @@ interface UserProfileCardProps {
   skillsNeeded: string[];
   rating: number;
   onClick?: () => void;
+  hideRequestButton?: boolean;
+  status?: string;
 }
 
 const UserProfileCard: React.FC<UserProfileCardProps> = ({
@@ -25,7 +27,22 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
   skillsNeeded,
   rating,
   onClick,
+  hideRequestButton = false,
+  status,
 }) => {
+  const getStatusConfig = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return { color: 'bg-yellow-100 text-yellow-700', icon: FaClock, text: 'Pending' };
+      case 'accepted':
+        return { color: 'bg-green-100 text-green-700', icon: FaCheck, text: 'Accepted' };
+      case 'rejected':
+        return { color: 'bg-red-100 text-red-700', icon: FaTimes, text: 'Rejected' };
+      default:
+        return { color: 'bg-gray-100 text-gray-700', icon: FaClock, text: 'Unknown' };
+    }
+  };
+
   return (
     <div
       className={
@@ -78,10 +95,17 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
           )}
         </div>
       </div>
-      {/* Bottom: Rating and Request Button */}
+      {/* Bottom: Rating and Request Button/Status */}
       <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
         <span className="flex items-center gap-1 text-yellow-500 font-semibold text-base"><FaStar className="text-base" />{rating}</span>
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold text-sm shadow transition-all">Request</button>
+        {hideRequestButton && status ? (
+          <span className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-medium gap-1 ${getStatusConfig(status).color}`}>
+            {React.createElement(getStatusConfig(status).icon, { className: "text-sm" })}
+            {getStatusConfig(status).text}
+          </span>
+        ) : (
+          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold text-sm shadow transition-all">Request</button>
+        )}
       </div>
     </div>
   );
