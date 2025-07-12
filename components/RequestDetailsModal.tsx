@@ -158,30 +158,30 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
             </div>
 
             {/* Action buttons */}
-            <div className="flex items-center gap-4 mt-6 pt-6 border-t border-gray-200">
-              {type === 'incoming' && request.status === 'pending' && (
-                <>
-                  <button className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
-                    Accept
-                  </button>
-                  <button className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
-                    Reject
-                  </button>
-                </>
-              )}
+            <div className="flex flex-col items-center gap-4 mt-6 pt-6 border-t border-gray-200">
               <button 
                 onClick={() => {
                   onClose();
                   router.push(`/userdetails/${getUserDetailsId(request.user.name)}`);
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center space-x-2"
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center gap-2"
               >
-                <FaUser className="h-4 w-4" />
+                <FaUser className="h-5 w-5" />
                 <span>View Full Profile</span>
               </button>
+              {type === 'incoming' && request.status === 'pending' && (
+                <div className="flex flex-row gap-6 justify-center w-full">
+                  <button className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
+                    Accept
+                  </button>
+                  <button className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
+                    Reject
+                  </button>
+                </div>
+              )}
               <button 
                 onClick={onClose}
-                className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                className="mt-2 px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors"
               >
                 Close
               </button>

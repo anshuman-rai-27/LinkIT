@@ -27,33 +27,6 @@ const HeroSection = () => {
           <p className="text-lg md:text-xl text-center text-gray-600 max-w-2xl mb-10">
             Connect with talented individuals, trade your expertise, and grow together in a collaborative community of makers and creators.
           </p>
-          {/* Search/filter bar */}
-          <div className="flex flex-col md:flex-row items-center gap-3 bg-white/90 shadow-lg rounded-2xl px-6 py-4 w-full max-w-3xl mb-4">
-            <div className="flex items-center w-full md:w-auto flex-1">
-              <span className="material-icons text-gray-400 mr-2">search</span>
-              <input
-                type="text"
-                placeholder="What skill are you looking for? (e.g., UX Design)"
-                className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
-                suppressHydrationWarning
-              />
-            </div>
-            <div className="flex items-center w-full md:w-auto flex-1">
-              <span className="material-icons text-gray-400 mr-2">location_on</span>
-              <input
-                type="text"
-                placeholder="Location"
-                className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
-                suppressHydrationWarning
-              />
-            </div>
-            <button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold px-5 py-2 rounded-xl shadow hover:from-pink-600 hover:to-purple-600 transition-all mr-2" suppressHydrationWarning>
-              Filters
-            </button>
-            <button className="bg-gradient-to-r from-blue-400 to-cyan-400 text-white font-semibold px-5 py-2 rounded-xl shadow hover:from-blue-500 hover:to-cyan-500 transition-all" suppressHydrationWarning>
-              Search
-            </button>
-          </div>
         </div>
       </section>
     );
@@ -74,33 +47,6 @@ const HeroSection = () => {
         <p className="text-lg md:text-xl text-center text-gray-600 max-w-2xl mb-10">
           Connect with talented individuals, trade your expertise, and grow together in a collaborative community of makers and creators.
         </p>
-        {/* Search/filter bar */}
-        <div className="flex flex-col md:flex-row items-center gap-3 bg-white/90 shadow-lg rounded-2xl px-6 py-4 w-full max-w-3xl mb-4">
-          <div className="flex items-center w-full md:w-auto flex-1">
-            <span className="material-icons text-gray-400 mr-2">search</span>
-            <input
-              type="text"
-              placeholder="What skill are you looking for? (e.g., UX Design)"
-              className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
-              suppressHydrationWarning
-            />
-          </div>
-          <div className="flex items-center w-full md:w-auto flex-1">
-            <span className="material-icons text-gray-400 mr-2">location_on</span>
-            <input
-              type="text"
-              placeholder="Location"
-              className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
-              suppressHydrationWarning
-            />
-          </div>
-          <button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold px-5 py-2 rounded-xl shadow hover:from-pink-600 hover:to-purple-600 transition-all mr-2" suppressHydrationWarning>
-            Filters
-          </button>
-          <button className="bg-gradient-to-r from-blue-400 to-cyan-400 text-white font-semibold px-5 py-2 rounded-xl shadow hover:from-blue-500 hover:to-cyan-500 transition-all" suppressHydrationWarning>
-            Search
-          </button>
-        </div>
       </div>
     </section>
   );

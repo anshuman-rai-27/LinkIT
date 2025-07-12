@@ -47,15 +47,15 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
     <div className="relative group">
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
       <div className="relative">
-        <div
-          className={
+    <div
+      className={
             "backdrop-blur-md bg-white/60 border border-white/40 rounded-2xl shadow-xl p-6 w-full max-w-xs flex flex-col gap-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer hover:ring-2 hover:ring-purple-400/50 hover:bg-white/80"
-          }
-          onClick={onClick}
-          tabIndex={0}
-          role="button"
-          aria-label={`View details for ${name}`}
-        >
+      }
+      onClick={onClick}
+      tabIndex={0}
+      role="button"
+      aria-label={`View details for ${name}`}
+    >
       {/* Top: Avatar, Name, Location */}
       <div className="flex items-center gap-4">
         {avatarUrl ? (
