@@ -3,7 +3,7 @@
 import React from "react";
 import { RoughNotation } from "react-rough-notation";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Lightbulb, Trophy, MessageCircle, Shield, Zap, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, Users, Lightbulb, Trophy, MessageCircle, Shield, Zap, Star, ChevronDown, ChevronUp, Sparkles, CheckCircle, Globe, Heart, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { CenteredWithLogo } from "@/components/footers/centered-with-logo";
 import { FooterWithGrid } from "@/components/footers/footer-with-grid";
@@ -91,33 +91,41 @@ const CommunityDashboard = ({ className }: CommunityDashboardProps) => {
   );
 };
 
-// FAQ Component
+// Enhanced FAQ Component with Aceternity styling
 const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <div className="border-b border-violet-100 last:border-b-0">
+    <div className="border border-violet-200 rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm">
       <button
-        className="flex justify-between items-center w-full py-6 text-left"
+        className="flex justify-between items-center w-full p-6 text-left hover:bg-violet-50/50 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-lg font-medium text-slate-900">{question}</span>
-        {isOpen ? (
-          <ChevronUp className="h-5 w-5 text-violet-600" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-violet-600" />
-        )}
+        <span className="text-lg font-semibold text-slate-900 pr-4">{question}</span>
+        <div className="flex-shrink-0">
+          {isOpen ? (
+            <ChevronUp className="h-5 w-5 text-violet-600 transition-transform" />
+          ) : (
+            <ChevronDown className="h-5 w-5 text-violet-600 transition-transform" />
+          )}
+        </div>
       </button>
       {isOpen && (
-        <div className="pb-6">
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="px-6 pb-6"
+        >
           <p className="text-slate-600 leading-relaxed">{answer}</p>
-        </div>
+        </motion.div>
       )}
     </div>
   );
 };
 
-// Testimonial Component
+// Enhanced Testimonial Component
 const TestimonialCard = ({ 
   name, 
   role, 
@@ -132,21 +140,78 @@ const TestimonialCard = ({
   rating: number; 
 }) => {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-lg border border-violet-100">
-      <div className="flex items-center mb-4">
-        <div className="flex space-x-1 mr-4">
-          {[...Array(rating)].map((_, i) => (
-            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-          ))}
+    <div className="group relative">
+      <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+      <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-violet-100">
+        <div className="flex items-center mb-6">
+          <div className="flex space-x-1">
+            {[...Array(rating)].map((_, i) => (
+              <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+            ))}
+          </div>
+        </div>
+        <p className="text-slate-600 mb-6 leading-relaxed text-lg italic">"{content}"</p>
+        <div className="flex items-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full mr-4 flex items-center justify-center">
+            <span className="text-white font-semibold text-sm">{name.split(' ').map(n => n[0]).join('')}</span>
+          </div>
+          <div>
+            <div className="font-semibold text-slate-900">{name}</div>
+            <div className="text-sm text-slate-500">{role}</div>
+          </div>
         </div>
       </div>
-      <p className="text-slate-600 mb-4 leading-relaxed">"{content}"</p>
-      <div className="flex items-center">
-        <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full mr-3"></div>
-        <div>
-          <div className="font-medium text-slate-900">{name}</div>
-          <div className="text-sm text-slate-500">{role}</div>
+    </div>
+  );
+};
+
+// Feature Card Component
+const FeatureCard = ({ 
+  icon: Icon, 
+  title, 
+  description, 
+  gradient 
+}: { 
+  icon: any; 
+  title: string; 
+  description: string; 
+  gradient: string; 
+}) => {
+  return (
+    <div className="group relative">
+      <div className={`absolute -inset-1 ${gradient} rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200`}></div>
+      <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-violet-100 hover:shadow-2xl transition-all duration-300">
+        <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="h-8 w-8 text-white" />
         </div>
+        <h3 className="text-xl font-bold text-slate-900 mb-4">{title}</h3>
+        <p className="text-slate-600 leading-relaxed">{description}</p>
+      </div>
+    </div>
+  );
+};
+
+// Stats Card Component
+const StatsCard = ({ 
+  icon: Icon, 
+  number, 
+  label, 
+  gradient 
+}: { 
+  icon: any; 
+  number: string; 
+  label: string; 
+  gradient: string; 
+}) => {
+  return (
+    <div className="group relative">
+      <div className={`absolute -inset-1 ${gradient} rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200`}></div>
+      <div className="relative bg-white p-6 rounded-2xl shadow-xl border border-violet-100 text-center">
+        <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="h-6 w-6 text-white" />
+        </div>
+        <div className="text-3xl font-bold text-slate-900 mb-2">{number}</div>
+        <div className="text-sm text-slate-600">{label}</div>
       </div>
     </div>
   );
@@ -154,7 +219,7 @@ const TestimonialCard = ({
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-violet-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-purple-50">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background Pattern */}
@@ -213,7 +278,7 @@ export default function Home() {
               >
                 <Button 
                   size="lg" 
-                  className="bg-violet-500 hover:bg-violet-600 text-white px-8 py-4 text-lg group transition-all duration-300"
+                  className="bg-violet-500 hover:bg-violet-600 text-white px-8 py-4 text-lg group transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   Start Learning Today
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -221,40 +286,37 @@ export default function Home() {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="border-violet-300 text-violet-700 hover:bg-violet-50 px-8 py-4 text-lg"
+                  className="border-violet-300 text-violet-700  bg-violet-50 px-8 py-4 text-lg shadow-lg hover:shadow-xl"
                 >
                   Explore Community
                 </Button>
               </motion.div>
 
-              {/* Stats */}
+              {/* Enhanced Stats */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="grid grid-cols-3 gap-6 pt-8 border-t border-violet-200"
+                className="grid grid-cols-3 gap-6 pt-8"
               >
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-violet-100 rounded-full mb-2 mx-auto">
-                    <Users className="h-6 w-6 text-violet-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-slate-900">12K+</div>
-                  <div className="text-sm text-slate-600">Active Members</div>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-2 mx-auto">
-                    <Lightbulb className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-slate-900">500+</div>
-                  <div className="text-sm text-slate-600">Skills Shared</div>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-violet-100 rounded-full mb-2 mx-auto">
-                    <Trophy className="h-6 w-6 text-violet-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-slate-900">95%</div>
-                  <div className="text-sm text-slate-600">Success Rate</div>
-                </div>
+                <StatsCard
+                  icon={Users}
+                  number="12K+"
+                  label="Active Members"
+                  gradient="from-violet-600 to-purple-600"
+                />
+                <StatsCard
+                  icon={Lightbulb}
+                  number="500+"
+                  label="Skills Shared"
+                  gradient="from-purple-600 to-violet-600"
+                />
+                <StatsCard
+                  icon={Trophy}
+                  number="95%"
+                  label="Success Rate"
+                  gradient="from-violet-600 to-purple-600"
+                />
               </motion.div>
             </div>
 
@@ -284,7 +346,7 @@ export default function Home() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 0.8 }}
-                  className="absolute -left-8 top-20 bg-white p-4 rounded-xl shadow-lg border border-violet-100"
+                  className="absolute -left-8 top-20 bg-white p-4 rounded-xl shadow-lg border border-violet-100 backdrop-blur-sm"
                 >
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center">
@@ -301,7 +363,7 @@ export default function Home() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 1.0 }}
-                  className="absolute -right-8 bottom-32 bg-white p-4 rounded-xl shadow-lg border border-purple-100"
+                  className="absolute -right-8 bottom-32 bg-white p-4 rounded-xl shadow-lg border border-purple-100 backdrop-blur-sm"
                 >
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
@@ -319,21 +381,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white">
+      {/* Enhanced Features Section */}
+      <section className="py-24 bg-gradient-to-b from-white to-violet-50">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-20"
           >
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Why Choose LinkIT?
+            <div className="inline-flex items-center space-x-2 bg-violet-100 px-4 py-2 rounded-full mb-6">
+              <Sparkles className="h-4 w-4 text-violet-600" />
+              <span className="text-violet-700 text-sm font-medium">Why Choose LinkIT?</span>
+            </div>
+            <h2 className="text-5xl font-bold text-slate-900 mb-6">
+              Everything You Need to
+              <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"> Succeed</span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Our platform offers everything you need to connect, learn, and grow with like-minded individuals.
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Our platform offers cutting-edge features designed to create meaningful connections and accelerate your learning journey.
             </p>
           </motion.div>
 
@@ -343,15 +410,13 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
               viewport={{ once: true }}
-              className="text-center p-6"
             >
-              <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <MessageCircle className="h-8 w-8 text-violet-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-4">Smart Matching</h3>
-              <p className="text-slate-600">
-                Our AI-powered algorithm connects you with the perfect mentors and learners based on your skills and goals.
-              </p>
+              <FeatureCard
+                icon={Target}
+                title="Smart Matching"
+                description="Our AI-powered algorithm connects you with the perfect mentors and learners based on your skills, goals, and learning preferences."
+                gradient="from-violet-600 to-purple-600"
+              />
             </motion.div>
 
             <motion.div
@@ -359,15 +424,13 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-center p-6"
             >
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Shield className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-4">Safe & Secure</h3>
-              <p className="text-slate-600">
-                Your privacy and security are our top priorities. Connect with confidence in our verified community.
-              </p>
+              <FeatureCard
+                icon={Shield}
+                title="Safe & Secure"
+                description="Your privacy and security are our top priorities. Connect with confidence in our verified community with end-to-end encryption."
+                gradient="from-purple-600 to-violet-600"
+              />
             </motion.div>
 
             <motion.div
@@ -375,35 +438,38 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
-              className="text-center p-6"
             >
-              <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Zap className="h-8 w-8 text-violet-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-4">Instant Learning</h3>
-              <p className="text-slate-600">
-                Start learning immediately with our real-time messaging, video calls, and collaborative tools.
-              </p>
+              <FeatureCard
+                icon={Zap}
+                title="Instant Learning"
+                description="Start learning immediately with our real-time messaging, video calls, screen sharing, and collaborative tools."
+                gradient="from-violet-600 to-purple-600"
+              />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-20 bg-violet-50">
+      {/* Enhanced Testimonials Section */}
+      <section className="py-24 bg-gradient-to-b from-violet-50 to-white">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-20"
           >
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              What Our Community Says
+            <div className="inline-flex items-center space-x-2 bg-violet-100 px-4 py-2 rounded-full mb-6">
+              <Heart className="h-4 w-4 text-violet-600" />
+              <span className="text-violet-700 text-sm font-medium">Community Love</span>
+            </div>
+            <h2 className="text-5xl font-bold text-slate-900 mb-6">
+              What Our Community
+              <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"> Says</span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Join thousands of satisfied learners who have transformed their skills through LinkIT.
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Join thousands of satisfied learners who have transformed their skills and careers through LinkIT.
             </p>
           </motion.div>
 
@@ -417,7 +483,7 @@ export default function Home() {
               <TestimonialCard
                 name="Sarah Chen"
                 role="React Developer"
-                content="LinkIT helped me find the perfect mentor for React development. The community is incredibly supportive and I've learned so much in just a few months."
+                content="LinkIT helped me find the perfect mentor for React development. The community is incredibly supportive and I've learned so much in just a few months. The skill matching is spot-on!"
                 avatar="/avatar1.jpg"
                 rating={5}
               />
@@ -432,7 +498,7 @@ export default function Home() {
               <TestimonialCard
                 name="Alex Kumar"
                 role="UI/UX Designer"
-                content="The skill matching algorithm is amazing! I connected with designers who shared exactly what I needed to learn. Highly recommended!"
+                content="The skill matching algorithm is amazing! I connected with designers who shared exactly what I needed to learn. The platform is intuitive and the community is genuinely helpful."
                 avatar="/avatar2.jpg"
                 rating={5}
               />
@@ -447,7 +513,7 @@ export default function Home() {
               <TestimonialCard
                 name="Maria Rodriguez"
                 role="Python Developer"
-                content="I've been teaching Python on LinkIT for over a year now. The platform makes it so easy to connect with eager learners and share knowledge."
+                content="I've been teaching Python on LinkIT for over a year now. The platform makes it so easy to connect with eager learners and share knowledge. It's rewarding to see others grow!"
                 avatar="/avatar3.jpg"
                 rating={5}
               />
@@ -456,21 +522,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-white">
+      {/* Enhanced FAQ Section */}
+      <section className="py-24 bg-gradient-to-b from-white to-violet-50">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-20"
           >
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Frequently Asked Questions
+            <div className="inline-flex items-center space-x-2 bg-violet-100 px-4 py-2 rounded-full mb-6">
+              <Globe className="h-4 w-4 text-violet-600" />
+              <span className="text-violet-700 text-sm font-medium">Got Questions?</span>
+            </div>
+            <h2 className="text-5xl font-bold text-slate-900 mb-6">
+              Frequently Asked
+              <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"> Questions</span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Everything you need to know about LinkIT and how to get started.
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Everything you need to know about LinkIT and how to get started on your learning journey.
             </p>
           </motion.div>
 
@@ -479,61 +550,73 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
-            <div className="bg-violet-50 rounded-2xl p-8">
+            <div className="space-y-4">
               <FAQItem
-                question="How does the skill matching work?"
-                answer="Our AI algorithm analyzes your profile, skills, and learning goals to connect you with the most compatible mentors and learners in our community."
+                question="How does the skill matching algorithm work?"
+                answer="Our advanced AI algorithm analyzes your profile, skills, learning goals, and preferences to connect you with the most compatible mentors and learners in our community. It considers factors like skill level, availability, teaching style, and learning objectives."
               />
               <FAQItem
-                question="Is LinkIT free to use?"
-                answer="Yes! LinkIT offers a free tier with access to basic features. We also offer premium plans with advanced features and unlimited connections."
+                question="Is LinkIT completely free to use?"
+                answer="Yes! LinkIT offers a generous free tier with access to core features including skill matching, messaging, and community access. We also offer premium plans with advanced features like unlimited connections, priority support, and exclusive workshops."
               />
               <FAQItem
-                question="How do I verify my skills?"
-                answer="You can verify your skills through our assessment system, portfolio uploads, or by getting endorsements from other community members."
+                question="How do I verify my skills on the platform?"
+                answer="You can verify your skills through multiple methods: our comprehensive assessment system, portfolio uploads, professional certifications, or by getting endorsements from other verified community members. This helps maintain quality and trust."
               />
               <FAQItem
-                question="Can I teach and learn at the same time?"
-                answer="Absolutely! Many of our members both teach skills they're expert in and learn new skills from others. It's a two-way learning experience."
+                question="Can I both teach and learn on LinkIT simultaneously?"
+                answer="Absolutely! Many of our members both teach skills they're expert in and learn new skills from others. It's a two-way learning experience that creates a vibrant, collaborative community where everyone can contribute and grow."
               />
               <FAQItem
-                question="What if I don't find a good match?"
-                answer="Our matching system continuously learns and improves. If you don't find a good match initially, we'll keep looking and notify you when better matches become available."
+                question="What happens if I don't find a good match initially?"
+                answer="Our matching system continuously learns and improves based on user feedback. If you don't find a good match initially, we'll keep looking and notify you when better matches become available. You can also adjust your preferences anytime."
               />
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-violet-500 to-purple-600">
-        <div className="container mx-auto px-4 text-center">
+      {/* Enhanced CTA Section */}
+      <section className="py-24 bg-gradient-to-r from-violet-500 via-purple-600 to-violet-600 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        
+        {/* Floating Elements */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-16 h-16 bg-white/10 rounded-full animate-bounce"></div>
+        
+        <div className="container mx-auto px-4 text-center relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Ready to Start Your Learning Journey?
+            <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+              <Sparkles className="h-4 w-4 text-white" />
+              <span className="text-white text-sm font-medium">Ready to Start?</span>
+            </div>
+            <h2 className="text-5xl font-bold text-white mb-6">
+              Start Your Learning
+              <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"> Journey Today</span>
             </h2>
-            <p className="text-xl text-violet-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of learners and mentors who are already transforming their skills and building meaningful connections.
+            <p className="text-xl text-violet-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Join thousands of learners and mentors who are already transforming their skills and building meaningful connections in our vibrant community.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button 
                 size="lg" 
-                className="bg-white text-violet-600 hover:bg-violet-50 px-8 py-4 text-lg"
+                className="bg-white text-violet-600 hover:bg-violet-50 px-10 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 group"
               >
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg"
+                className="border-2 border-white text-white hover:bg-white/10 px-10 py-6 text-lg font-semibold backdrop-blur-sm transition-all duration-300"
               >
                 Learn More
               </Button>
