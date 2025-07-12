@@ -1,13 +1,13 @@
+//app/page.tsx
 "use client";
 
 import React from "react";
-// import { RoughNotation } from "react-rough-notation";
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Lightbulb, Trophy, MessageCircle, Shield, Zap, Star, ChevronDown, ChevronUp, Sparkles, CheckCircle, Globe, Heart, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
-import { CenteredWithLogo } from "@/components/footers/centered-with-logo";
-import { FooterWithGrid } from "@/components/footers/footer-with-grid";
 import { SimpleFooterWithFourGrids } from "@/components/footers/simple-footer-with-four-grids";
+import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 
 interface CommunityDashboardProps {
   className?: string;
@@ -144,24 +144,36 @@ const TestimonialCard = ({
       <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
       <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-purple-100">
         <div className="flex items-center mb-6">
+
           <div className="flex space-x-1">
             {[...Array(rating)].map((_, i) => (
               <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
             ))}
           </div>
         </div>
-        <p className="text-slate-600 mb-6 leading-relaxed text-lg italic">"{content}"</p>
+
+        {/* Testimonial text */}
+        <p className="text-slate-700 mb-8 leading-relaxed text-lg font-medium relative">
+          "{content}"
+        </p>
+
+        {/* Author info */}
         <div className="flex items-center">
           <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full mr-4 flex items-center justify-center">
             <span className="text-white font-semibold text-sm">{name.split(' ').map(n => n[0]).join('')}</span>
+
           </div>
-          <div>
-            <div className="font-semibold text-slate-900">{name}</div>
-            <div className="text-sm text-slate-500">{role}</div>
+          <div className="ml-4">
+            <div className="font-bold text-slate-900 text-lg">{name}</div>
+            <div className="text-slate-500 font-medium">{role}</div>
           </div>
         </div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-violet-200 to-purple-200 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+        <div className="absolute bottom-4 left-4 w-8 h-8 bg-gradient-to-br from-purple-200 to-violet-200 rounded-full opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -230,7 +242,9 @@ export default function Home() {
         <div className="absolute top-1/3 right-20 w-12 h-12 bg-pink-200 rounded-full opacity-40 animate-pulse"></div>
         <div className="absolute bottom-1/4 left-1/4 w-8 h-8 bg-purple-300 rounded-full opacity-50"></div>
 
+
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20">
+
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="space-y-8">
@@ -251,21 +265,26 @@ export default function Home() {
                   </div>
                 </div>
 
-                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                   <span className="text-slate-900">Connect, Learn, </span>
-                  {/* <RoughNotation
-                    type="highlight"
-                    show={true}
-                    color="#8b5cf6"
-                    animationDelay={1000}
-                    animationDuration={2000}
-                    multiline
+                  <motion.span
+                    className="relative inline-block"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 1.2 }}
                   >
-                    <span className="text-slate-900">Grow Together</span>
-                  </RoughNotation> */}
+                    <span className="text-slate-900 relative z-10">Grow Together</span>
+                    <motion.div
+                      className="absolute inset-0 bg-violet-400/20 rounded-lg"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 1.5, delay: 1.5, ease: "easeOut" }}
+                      style={{ transformOrigin: "left" }}
+                    />
+                  </motion.span>
                 </h1>
 
-                <p className="text-xl text-slate-600 leading-relaxed">
+                <p className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed">
                   Join thousands of learners sharing skills, finding mentors, and building meaningful connections in our vibrant community platform.
                 </p>
               </motion.div>
@@ -297,7 +316,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="grid grid-cols-3 gap-6 pt-8"
+                className="hidden sm:grid grid-cols-3 gap-6 pt-8"
               >
                 <StatsCard
                   icon={Users}
@@ -321,7 +340,7 @@ export default function Home() {
             </div>
 
             {/* Right Content - Mobile Mockup */}
-            <div className="relative lg:pl-8">
+            <div className="relative lg:pl-8 mt-12 lg:mt-0">
               <motion.div
                 initial={{ opacity: 0, x: 30, rotateY: -15 }}
                 animate={{ opacity: 1, x: 0, rotateY: 0 }}
@@ -329,13 +348,13 @@ export default function Home() {
                 className="relative"
               >
                 {/* Phone Frame */}
-                <div className="relative mx-auto w-72 h-[600px] bg-slate-900 rounded-[2.5rem] p-2 shadow-2xl">
-                  <div className="w-full h-full bg-white rounded-[2rem] overflow-hidden relative">
+                <div className="relative mx-auto w-64 sm:w-72 h-[500px] sm:h-[600px] bg-slate-900 rounded-[2rem] sm:rounded-[2.5rem] p-2 shadow-2xl">
+                  <div className="w-full h-full bg-white rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative">
                     {/* Notch */}
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl"></div>
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 sm:w-32 h-5 sm:h-6 bg-slate-900 rounded-b-xl sm:rounded-b-2xl"></div>
                     
                     {/* Content */}
-                    <div className="pt-8 h-full">
+                    <div className="pt-6 sm:pt-8 h-full">
                       <CommunityDashboard />
                     </div>
                   </div>
@@ -346,15 +365,17 @@ export default function Home() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 0.8 }}
+
                   className="absolute -left-8 top-20 bg-white p-4 rounded-xl shadow-lg border border-purple-100 backdrop-blur-sm"
                 >
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                       <span className="text-purple-600 text-sm">🎯</span>
+
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-slate-900">Skill Match</div>
-                      <div className="text-xs text-slate-500">95% compatibility</div>
+                      <div className="text-xs sm:text-sm font-medium text-slate-900">Skill Match</div>
+                      <div className="text-[10px] sm:text-xs text-slate-500">95% compatibility</div>
                     </div>
                   </div>
                 </motion.div>
@@ -363,15 +384,17 @@ export default function Home() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 1.0 }}
+
                   className="absolute -right-8 bottom-32 bg-white p-4 rounded-xl shadow-lg border border-pink-100 backdrop-blur-sm"
                 >
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center">
                       <span className="text-pink-600 text-sm">⚡</span>
+
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-slate-900">Quick Connect</div>
-                      <div className="text-xs text-slate-500">Instant messaging</div>
+                      <div className="text-xs sm:text-sm font-medium text-slate-900">Quick Connect</div>
+                      <div className="text-[10px] sm:text-xs text-slate-500">Instant messaging</div>
                     </div>
                   </div>
                 </motion.div>
@@ -382,34 +405,34 @@ export default function Home() {
       </section>
 
       {/* Enhanced Features Section */}
+
       <section className="py-24 bg-gradient-to-b from-white to-purple-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
             className="text-center mb-20"
           >
             <div className="inline-flex items-center space-x-2 bg-purple-100 px-4 py-2 rounded-full mb-6">
               <Sparkles className="h-4 w-4 text-purple-600" />
               <span className="text-purple-700 text-sm font-medium">Why Choose LinkIT?</span>
             </div>
-            <h2 className="text-5xl font-bold text-slate-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Everything You Need to
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Succeed</span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-4">
               Our platform offers cutting-edge features designed to create meaningful connections and accelerate your learning journey.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
             >
               <FeatureCard
                 icon={Target}
@@ -421,9 +444,8 @@ export default function Home() {
 
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
             >
               <FeatureCard
                 icon={Shield}
@@ -435,9 +457,8 @@ export default function Home() {
 
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
             >
               <FeatureCard
                 icon={Zap}
@@ -464,60 +485,64 @@ export default function Home() {
               <Heart className="h-4 w-4 text-purple-600" />
               <span className="text-purple-700 text-sm font-medium">Community Love</span>
             </div>
-            <h2 className="text-5xl font-bold text-slate-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8">
               What Our Community
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Says</span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed px-4">
               Join thousands of satisfied learners who have transformed their skills and careers through LinkIT.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <TestimonialCard
-                name="Sarah Chen"
-                role="React Developer"
-                content="LinkIT helped me find the perfect mentor for React development. The community is incredibly supportive and I've learned so much in just a few months. The skill matching is spot-on!"
-                avatar="/avatar1.jpg"
-                rating={5}
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <TestimonialCard
-                name="Alex Kumar"
-                role="UI/UX Designer"
-                content="The skill matching algorithm is amazing! I connected with designers who shared exactly what I needed to learn. The platform is intuitive and the community is genuinely helpful."
-                avatar="/avatar2.jpg"
-                rating={5}
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <TestimonialCard
-                name="Maria Rodriguez"
-                role="Python Developer"
-                content="I've been teaching Python on LinkIT for over a year now. The platform makes it so easy to connect with eager learners and share knowledge. It's rewarding to see others grow!"
-                avatar="/avatar3.jpg"
-                rating={5}
-              />
-            </motion.div>
+          <div className="flex justify-center">
+            <InfiniteMovingCards
+              items={[
+                {
+                  quote: "LinkIT helped me find the perfect mentor for React development. The community is incredibly supportive and I've learned so much in just a few months. The skill matching is spot-on!",
+                  name: "Sarah Chen",
+                  title: "React Developer"
+                },
+                {
+                  quote: "The skill matching algorithm is amazing! I connected with designers who shared exactly what I needed to learn. The platform is intuitive and the community is genuinely helpful.",
+                  name: "Alex Kumar",
+                  title: "UI/UX Designer"
+                },
+                {
+                  quote: "I've been teaching Python on LinkIT for over a year now. The platform makes it so easy to connect with eager learners and share knowledge. It's rewarding to see others grow!",
+                  name: "Maria Rodriguez",
+                  title: "Python Developer"
+                },
+                {
+                  quote: "LinkIT transformed my learning journey. The AI matching found me the perfect mentor for machine learning, and the community support is incredible. Highly recommended!",
+                  name: "David Kim",
+                  title: "Data Scientist"
+                },
+                {
+                  quote: "As a mentor, I love how LinkIT connects me with motivated learners. The platform is well-designed and the feedback system helps me improve my teaching.",
+                  name: "Emily Watson",
+                  title: "Full Stack Developer"
+                },
+                {
+                  quote: "The real-time collaboration features are game-changing. I can share my screen, code together, and get instant feedback. It's like having a study buddy 24/7!",
+                  name: "James Wilson",
+                  title: "Frontend Developer"
+                },
+                {
+                  quote: "LinkIT's verification system gives me confidence in the quality of mentors. I know I'm learning from verified experts in their fields.",
+                  name: "Lisa Park",
+                  title: "Product Manager"
+                },
+                {
+                  quote: "The community aspect is what sets LinkIT apart. I've made friends, found job opportunities, and built a network of like-minded professionals.",
+                  name: "Michael Brown",
+                  title: "DevOps Engineer"
+                }
+              ]}
+              direction="left"
+              speed="slow"
+              pauseOnHover={true}
+              className="mx-auto"
+            />
           </div>
         </div>
       </section>
@@ -536,11 +561,11 @@ export default function Home() {
               <Globe className="h-4 w-4 text-purple-600" />
               <span className="text-purple-700 text-sm font-medium">Got Questions?</span>
             </div>
-            <h2 className="text-5xl font-bold text-slate-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Frequently Asked
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Questions</span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-4">
               Everything you need to know about LinkIT and how to get started on your learning journey.
             </p>
           </motion.div>
@@ -580,6 +605,7 @@ export default function Home() {
 
       {/* Enhanced CTA Section */}
       <section className="py-24 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 relative overflow-hidden">
+
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         
@@ -598,25 +624,27 @@ export default function Home() {
               <Sparkles className="h-4 w-4 text-white" />
               <span className="text-white text-sm font-medium">Ready to Start?</span>
             </div>
-            <h2 className="text-5xl font-bold text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
               Start Your Learning
               <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"> Journey Today</span>
             </h2>
             <p className="text-xl text-purple-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+
               Join thousands of learners and mentors who are already transforming their skills and building meaningful connections in our vibrant community.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4">
               <Button 
                 size="lg" 
                 className="bg-white text-purple-600 hover:bg-purple-50 px-10 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 group"
+
               >
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="border-2 border-white text-white hover:bg-white/10 px-10 py-6 text-lg font-semibold backdrop-blur-sm transition-all duration-300"
+                className="border-2 border-white text-white hover:bg-white/10 px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg font-semibold backdrop-blur-sm transition-all duration-300"
               >
                 Learn More
               </Button>

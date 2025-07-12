@@ -51,7 +51,9 @@ export async function POST(req: Request) {
         verified:true
     }
   })
-  const token = signToken({ userId: user.id, email: user.email });
+  const token = signToken({ userId: user.id, email: user.email }, {
+    expiresIn: '1d'
+  });
   return NextResponse.json({
     message: 'User registered',
     user: { id: user.id, email: user.email },
