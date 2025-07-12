@@ -25,6 +25,7 @@ LinkIt is a skill-sharing platform that connects users who want to exchange skil
 ## 👥 Team Details
 
 **Team Name** : Team 0715
+**Video link** : https://drive.google.com/drive/folders/1zW-LZjAnALlArXV9FpuA1FimKOdWamXs?usp=sharing
 
 **Team Members:**
 - **Mayank** - [mayank.m.nita@gmail.com](mailto:mayank.m.nita@gmail.com)
