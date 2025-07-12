@@ -1,4 +1,10 @@
-# LinkIT
+# LinkIT (odoo Hackathon- Skill Swap Platform (Problem Statement-1))
+
+## Team Details:
+Mayank: mayank.m.nita@gmail.com
+Anshuman: anshumanrishi27@gmail.com
+Edan: edantuti@gmail.com
+Priyanshu: priyanshudas01@gmail.com
 
 ## 🚀 Quick Docker Manual Usage
 
