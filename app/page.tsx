@@ -17,7 +17,7 @@ const CommunityDashboard = ({ className }: CommunityDashboardProps) => {
   return (
     <div className={`bg-white rounded-2xl shadow-2xl overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-500 to-violet-600 p-3">
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-3">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-white/20 rounded-full"></div>
           <div className="w-3 h-3 bg-white/20 rounded-full"></div>
@@ -32,38 +32,38 @@ const CommunityDashboard = ({ className }: CommunityDashboardProps) => {
       <div className="p-4 space-y-4">
         {/* Stats Section */}
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-violet-50 p-2 rounded-lg text-center">
-            <div className="text-lg font-bold text-violet-600">1,240</div>
-            <div className="text-xs text-violet-500">Active Learners</div>
-          </div>
           <div className="bg-purple-50 p-2 rounded-lg text-center">
-            <div className="text-lg font-bold text-purple-600">847</div>
-            <div className="text-xs text-purple-500">Skills Shared</div>
+            <div className="text-lg font-bold text-purple-600">1,240</div>
+            <div className="text-xs text-purple-500">Active Learners</div>
+          </div>
+          <div className="bg-pink-50 p-2 rounded-lg text-center">
+            <div className="text-lg font-bold text-pink-600">847</div>
+            <div className="text-xs text-pink-500">Skills Shared</div>
           </div>
         </div>
 
         {/* User Cards */}
         <div className="space-y-2">
           <div className="flex items-center space-x-2 p-2 bg-gray-50 rounded-lg">
-            <div className="w-6 h-6 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full"></div>
+            <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full"></div>
             <div className="flex-1">
               <div className="text-xs font-medium text-gray-800">Sarah Chen</div>
               <div className="text-[10px] text-gray-500">React Developer</div>
             </div>
             <div className="flex space-x-1">
-              <span className="px-1.5 py-0.5 bg-violet-100 text-violet-700 text-[8px] rounded">JS</span>
-              <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[8px] rounded">React</span>
+              <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[8px] rounded">JS</span>
+              <span className="px-1.5 py-0.5 bg-pink-100 text-pink-700 text-[8px] rounded">React</span>
             </div>
           </div>
 
           <div className="flex items-center space-x-2 p-2 bg-gray-50 rounded-lg">
-            <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-violet-500 rounded-full"></div>
+            <div className="w-6 h-6 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full"></div>
             <div className="flex-1">
               <div className="text-xs font-medium text-gray-800">Alex Kumar</div>
               <div className="text-[10px] text-gray-500">UI/UX Designer</div>
             </div>
             <div className="flex space-x-1">
-              <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[8px] rounded">Figma</span>
+              <span className="px-1.5 py-0.5 bg-pink-100 text-pink-700 text-[8px] rounded">Figma</span>
             </div>
           </div>
         </div>
@@ -74,13 +74,13 @@ const CommunityDashboard = ({ className }: CommunityDashboardProps) => {
           <div className="space-y-1">
             <div className="flex items-center justify-between text-[10px]">
               <span className="text-gray-600">Maria wants to learn React</span>
-              <button className="px-2 py-1 bg-violet-500 text-white rounded text-[8px]">
+              <button className="px-2 py-1 bg-purple-500 text-white rounded text-[8px]">
                 Accept
               </button>
             </div>
             <div className="flex items-center justify-between text-[10px]">
               <span className="text-gray-600">John offers Python tutoring</span>
-              <button className="px-2 py-1 bg-purple-500 text-white rounded text-[8px]">
+              <button className="px-2 py-1 bg-pink-500 text-white rounded text-[8px]">
                 Connect
               </button>
             </div>
@@ -96,17 +96,17 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <div className="border border-violet-200 rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm">
+    <div className="border border-purple-200 rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm">
       <button
-        className="flex justify-between items-center w-full p-6 text-left hover:bg-violet-50/50 transition-colors"
+        className="flex justify-between items-center w-full p-6 text-left hover:bg-purple-50/50 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="text-lg font-semibold text-slate-900 pr-4">{question}</span>
         <div className="flex-shrink-0">
           {isOpen ? (
-            <ChevronUp className="h-5 w-5 text-violet-600 transition-transform" />
+            <ChevronUp className="h-5 w-5 text-purple-600 transition-transform" />
           ) : (
-            <ChevronDown className="h-5 w-5 text-violet-600 transition-transform" />
+            <ChevronDown className="h-5 w-5 text-purple-600 transition-transform" />
           )}
         </div>
       </button>
@@ -141,8 +141,8 @@ const TestimonialCard = ({
 }) => {
   return (
     <div className="group relative">
-      <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-      <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-violet-100">
+      <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+      <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-purple-100">
         <div className="flex items-center mb-6">
           <div className="flex space-x-1">
             {[...Array(rating)].map((_, i) => (
@@ -152,7 +152,7 @@ const TestimonialCard = ({
         </div>
         <p className="text-slate-600 mb-6 leading-relaxed text-lg italic">"{content}"</p>
         <div className="flex items-center">
-          <div className="w-12 h-12 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full mr-4 flex items-center justify-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full mr-4 flex items-center justify-center">
             <span className="text-white font-semibold text-sm">{name.split(' ').map(n => n[0]).join('')}</span>
           </div>
           <div>
@@ -180,8 +180,8 @@ const FeatureCard = ({
   return (
     <div className="group relative">
       <div className={`absolute -inset-1 ${gradient} rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200`}></div>
-      <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-violet-100 hover:shadow-2xl transition-all duration-300">
-        <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+      <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-purple-100 hover:shadow-2xl transition-all duration-300">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
           <Icon className="h-8 w-8 text-white" />
         </div>
         <h3 className="text-xl font-bold text-slate-900 mb-4">{title}</h3>
@@ -206,8 +206,8 @@ const StatsCard = ({
   return (
     <div className="group relative">
       <div className={`absolute -inset-1 ${gradient} rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200`}></div>
-      <div className="relative bg-white p-6 rounded-2xl shadow-xl border border-violet-100 text-center">
-        <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+      <div className="relative bg-white p-6 rounded-2xl shadow-xl border border-purple-100 text-center">
+        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
           <Icon className="h-6 w-6 text-white" />
         </div>
         <div className="text-3xl font-bold text-slate-900 mb-2">{number}</div>
@@ -219,18 +219,18 @@ const StatsCard = ({
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8b5cf610_1px,transparent_1px),linear-gradient(to_bottom,#8b5cf610_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         
         {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-16 h-16 bg-violet-200 rounded-full opacity-60 animate-bounce"></div>
-        <div className="absolute top-1/3 right-20 w-12 h-12 bg-purple-200 rounded-full opacity-40 animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-8 h-8 bg-violet-300 rounded-full opacity-50"></div>
+        <div className="absolute top-20 left-10 w-16 h-16 bg-purple-200 rounded-full opacity-60 animate-bounce"></div>
+        <div className="absolute top-1/3 right-20 w-12 h-12 bg-pink-200 rounded-full opacity-40 animate-pulse"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-8 h-8 bg-purple-300 rounded-full opacity-50"></div>
 
-        <div className="relative container mx-auto px-4 py-20">
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="space-y-8">
@@ -239,13 +239,13 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-violet-200 mb-6">
+                <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-200 mb-6">
                   <div className="flex items-center space-x-1">
-                    <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
-                    <span className="text-violet-700 text-sm font-medium">LinkIT Community Platform</span>
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                    <span className="text-purple-700 text-sm font-medium">LinkIT Community Platform</span>
                   </div>
-                  <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-violet-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
                     </svg>
                   </div>
@@ -278,7 +278,7 @@ export default function Home() {
               >
                 <Button 
                   size="lg" 
-                  className="bg-violet-500 hover:bg-violet-600 text-white px-8 py-4 text-lg group transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-4 text-lg group transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   Start Learning Today
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -286,7 +286,7 @@ export default function Home() {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="border-violet-300 text-violet-700  bg-violet-50 px-8 py-4 text-lg shadow-lg hover:shadow-xl"
+                  className="border-purple-300 text-purple-700 bg-purple-50 px-8 py-4 text-lg shadow-lg hover:shadow-xl"
                 >
                   Explore Community
                 </Button>
@@ -303,19 +303,19 @@ export default function Home() {
                   icon={Users}
                   number="12K+"
                   label="Active Members"
-                  gradient="from-violet-600 to-purple-600"
+                  gradient="from-purple-600 to-pink-600"
                 />
                 <StatsCard
                   icon={Lightbulb}
                   number="500+"
                   label="Skills Shared"
-                  gradient="from-purple-600 to-violet-600"
+                  gradient="from-pink-600 to-purple-600"
                 />
                 <StatsCard
                   icon={Trophy}
                   number="95%"
                   label="Success Rate"
-                  gradient="from-violet-600 to-purple-600"
+                  gradient="from-purple-600 to-pink-600"
                 />
               </motion.div>
             </div>
@@ -346,11 +346,11 @@ export default function Home() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 0.8 }}
-                  className="absolute -left-8 top-20 bg-white p-4 rounded-xl shadow-lg border border-violet-100 backdrop-blur-sm"
+                  className="absolute -left-8 top-20 bg-white p-4 rounded-xl shadow-lg border border-purple-100 backdrop-blur-sm"
                 >
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center">
-                      <span className="text-violet-600 text-sm">🎯</span>
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-purple-600 text-sm">🎯</span>
                     </div>
                     <div>
                       <div className="text-sm font-medium text-slate-900">Skill Match</div>
@@ -363,11 +363,11 @@ export default function Home() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 1.0 }}
-                  className="absolute -right-8 bottom-32 bg-white p-4 rounded-xl shadow-lg border border-purple-100 backdrop-blur-sm"
+                  className="absolute -right-8 bottom-32 bg-white p-4 rounded-xl shadow-lg border border-pink-100 backdrop-blur-sm"
                 >
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                      <span className="text-purple-600 text-sm">⚡</span>
+                    <div className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center">
+                      <span className="text-pink-600 text-sm">⚡</span>
                     </div>
                     <div>
                       <div className="text-sm font-medium text-slate-900">Quick Connect</div>
@@ -382,8 +382,8 @@ export default function Home() {
       </section>
 
       {/* Enhanced Features Section */}
-      <section className="py-24 bg-gradient-to-b from-white to-violet-50">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-gradient-to-b from-white to-purple-50">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -391,13 +391,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <div className="inline-flex items-center space-x-2 bg-violet-100 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="h-4 w-4 text-violet-600" />
-              <span className="text-violet-700 text-sm font-medium">Why Choose LinkIT?</span>
+            <div className="inline-flex items-center space-x-2 bg-purple-100 px-4 py-2 rounded-full mb-6">
+              <Sparkles className="h-4 w-4 text-purple-600" />
+              <span className="text-purple-700 text-sm font-medium">Why Choose LinkIT?</span>
             </div>
             <h2 className="text-5xl font-bold text-slate-900 mb-6">
               Everything You Need to
-              <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"> Succeed</span>
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Succeed</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Our platform offers cutting-edge features designed to create meaningful connections and accelerate your learning journey.
@@ -415,7 +415,7 @@ export default function Home() {
                 icon={Target}
                 title="Smart Matching"
                 description="Our AI-powered algorithm connects you with the perfect mentors and learners based on your skills, goals, and learning preferences."
-                gradient="from-violet-600 to-purple-600"
+                gradient="from-purple-600 to-pink-600"
               />
             </motion.div>
 
@@ -429,7 +429,7 @@ export default function Home() {
                 icon={Shield}
                 title="Safe & Secure"
                 description="Your privacy and security are our top priorities. Connect with confidence in our verified community with end-to-end encryption."
-                gradient="from-purple-600 to-violet-600"
+                gradient="from-pink-600 to-purple-600"
               />
             </motion.div>
 
@@ -443,7 +443,7 @@ export default function Home() {
                 icon={Zap}
                 title="Instant Learning"
                 description="Start learning immediately with our real-time messaging, video calls, screen sharing, and collaborative tools."
-                gradient="from-violet-600 to-purple-600"
+                gradient="from-purple-600 to-pink-600"
               />
             </motion.div>
           </div>
@@ -451,8 +451,8 @@ export default function Home() {
       </section>
 
       {/* Enhanced Testimonials Section */}
-      <section className="py-24 bg-gradient-to-b from-violet-50 to-white">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-gradient-to-b from-purple-50 to-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -460,13 +460,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <div className="inline-flex items-center space-x-2 bg-violet-100 px-4 py-2 rounded-full mb-6">
-              <Heart className="h-4 w-4 text-violet-600" />
-              <span className="text-violet-700 text-sm font-medium">Community Love</span>
+            <div className="inline-flex items-center space-x-2 bg-purple-100 px-4 py-2 rounded-full mb-6">
+              <Heart className="h-4 w-4 text-purple-600" />
+              <span className="text-purple-700 text-sm font-medium">Community Love</span>
             </div>
             <h2 className="text-5xl font-bold text-slate-900 mb-6">
               What Our Community
-              <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"> Says</span>
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Says</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Join thousands of satisfied learners who have transformed their skills and careers through LinkIT.
@@ -523,8 +523,8 @@ export default function Home() {
       </section>
 
       {/* Enhanced FAQ Section */}
-      <section className="py-24 bg-gradient-to-b from-white to-violet-50">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-gradient-to-b from-white to-purple-50">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -532,13 +532,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <div className="inline-flex items-center space-x-2 bg-violet-100 px-4 py-2 rounded-full mb-6">
-              <Globe className="h-4 w-4 text-violet-600" />
-              <span className="text-violet-700 text-sm font-medium">Got Questions?</span>
+            <div className="inline-flex items-center space-x-2 bg-purple-100 px-4 py-2 rounded-full mb-6">
+              <Globe className="h-4 w-4 text-purple-600" />
+              <span className="text-purple-700 text-sm font-medium">Got Questions?</span>
             </div>
             <h2 className="text-5xl font-bold text-slate-900 mb-6">
               Frequently Asked
-              <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"> Questions</span>
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Questions</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Everything you need to know about LinkIT and how to get started on your learning journey.
@@ -579,7 +579,7 @@ export default function Home() {
       </section>
 
       {/* Enhanced CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-violet-500 via-purple-600 to-violet-600 relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         
@@ -587,7 +587,7 @@ export default function Home() {
         <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-16 h-16 bg-white/10 rounded-full animate-bounce"></div>
         
-        <div className="container mx-auto px-4 text-center relative">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -602,13 +602,13 @@ export default function Home() {
               Start Your Learning
               <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"> Journey Today</span>
             </h2>
-            <p className="text-xl text-violet-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-purple-100 mb-10 max-w-3xl mx-auto leading-relaxed">
               Join thousands of learners and mentors who are already transforming their skills and building meaningful connections in our vibrant community.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button 
                 size="lg" 
-                className="bg-white text-violet-600 hover:bg-violet-50 px-10 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 group"
+                className="bg-white text-purple-600 hover:bg-purple-50 px-10 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 group"
               >
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

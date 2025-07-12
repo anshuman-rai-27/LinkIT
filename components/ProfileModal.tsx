@@ -14,9 +14,10 @@ interface ProfileModalProps {
     rating: number;
   };
   onClose: () => void;
+  onRequest?: () => void;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ profile, onClose }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ profile, onClose, onRequest }) => {
   if (!profile) return null;
 
   return (
@@ -99,7 +100,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ profile, onClose }) => {
 
             {/* Action buttons */}
             <div className="flex items-center gap-4 mt-6 pt-6 border-t border-gray-200">
-              <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full font-semibold text-base shadow-lg transition-all">
+              <button 
+                onClick={onRequest}
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full font-semibold text-base shadow-lg transition-all"
+              >
                 Request
               </button>
               <button 
