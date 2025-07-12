@@ -115,22 +115,22 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="relative max-w-2xl w-full mx-4">
+      <div className="relative max-w-2xl w-full mx-2 sm:mx-4">
         {/* Background blur effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl"></div>
         
         {/* Modal content */}
-        <div className="relative backdrop-blur-md bg-white/80 border border-white/40 rounded-3xl shadow-2xl p-8 flex flex-col md:flex-row gap-8 animate-fadeIn">
+        <div className="relative backdrop-blur-md bg-white/80 border border-white/40 rounded-3xl shadow-2xl p-4 sm:p-8 flex flex-col md:flex-row gap-4 sm:gap-8 animate-fadeIn max-h-[90vh] overflow-y-auto pb-32">
           {/* Close button */}
           <button 
             onClick={onClose} 
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl transition-colors z-10"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-700 text-2xl transition-colors z-10"
           >
             <FaTimes />
           </button>
           
           {/* Left: Avatar and Status */}
-          <div className="flex flex-col items-center justify-center md:w-1/3 w-full">
+          <div className="flex flex-col items-center justify-center md:w-1/3 w-full mb-4 md:mb-0">
             {request.user.avatarUrl ? (
               <img 
                 src={request.user.avatarUrl} 
@@ -235,7 +235,7 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
             )}
 
             {/* Action buttons */}
-            <div className="flex items-center gap-4 mt-6 pt-6 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row flex-wrap items-center gap-4 mt-6 pt-6 border-t border-gray-200 pb-4">
               {type === 'incoming' && request.status === 'pending' && (
                 <>
                   <button 
@@ -264,6 +264,16 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
                   </button>
                 </>
               )}
+              <button 
+                onClick={() => {
+                  onClose();
+                  router.push(`/userdetails/${request.user.id}`);
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center gap-2"
+              >
+                <FaUser className="h-5 w-5" />
+                <span>View Full Profile</span>
+              </button>
               {type === 'outgoing' && request.status === 'pending' && (
                 <button 
                   onClick={() => handleRequestAction('CANCELLED')}
@@ -277,26 +287,6 @@ const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({ request, onCl
                   )}
                   Cancel
                 </button>
-              )}
-              <button 
-                onClick={() => {
-                  onClose();
-                  router.push(`/userdetails/${request.user.id}`);
-                }}
-                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full font-semibold text-base shadow-lg transition-all flex items-center gap-2"
-              >
-                <FaUser className="h-5 w-5" />
-                <span>View Full Profile</span>
-              </button>
-              {type === 'incoming' && request.status === 'pending' && (
-                <div className="flex flex-row gap-6 justify-center w-full">
-                  <button className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
-                    Accept
-                  </button>
-                  <button className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full font-semibold text-base shadow-lg transition-all">
-                    Reject
-                  </button>
-                </div>
               )}
               <button 
                 onClick={onClose}

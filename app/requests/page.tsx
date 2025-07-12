@@ -142,14 +142,11 @@ export default function RequestsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
-        <div className="relative z-10 max-w-6xl mx-auto py-8 px-4">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading requests...</p>
-            </div>
-          </div>
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-full h-full min-h-[400px]">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-500 mb-6"></div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Loading requests...</h2>
+          <p className="text-gray-600">Please wait while we fetch your requests.</p>
         </div>
       </main>
     );
@@ -185,83 +182,78 @@ export default function RequestsPage() {
         <div className="absolute top-40 left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto py-8 px-4">
+      <div className="relative z-10 max-w-6xl mx-auto py-8 px-4 sm:px-8">
         <h1 className="text-5xl font-bold text-center mb-8 text-gray-800 bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
           Requests
         </h1>
         
         {/* Tab Navigation */}
-        <div className="flex justify-center mb-8">
-          <div className="backdrop-blur-md bg-white/60 rounded-2xl p-1 shadow-xl border border-white/40">
-            <button
-              key="incoming-tab"
-              onClick={() => setActiveTab('incoming')}
-              className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
-                activeTab === 'incoming'
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
-              }`}
-            >
-              Incoming Requests ({currentRequests.filter(r => r.isIncoming).length})
-            </button>
-            <button
-              key="outgoing-tab"
-              onClick={() => setActiveTab('outgoing')}
-              className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
-                activeTab === 'outgoing'
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
-              }`}
-            >
-              Outgoing Requests ({currentRequests.filter(r => !r.isIncoming).length})
-            </button>
+        <div className="flex flex-col sm:flex-row justify-center mb-8 gap-2">
+          <div className="backdrop-blur-md bg-white/60 rounded-2xl p-1 shadow-xl border border-white/40 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-2 justify-center">
+              <button
+                key="incoming-tab"
+                onClick={() => setActiveTab('incoming')}
+                className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
+                  activeTab === 'incoming'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                    : 'text-gray-600 hover:text-purple-600'
+                }`}
+              >
+                Incoming Requests
+              </button>
+              <button
+                key="outgoing-tab"
+                onClick={() => setActiveTab('outgoing')}
+                className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
+                  activeTab === 'outgoing'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                    : 'text-gray-600 hover:text-purple-600'
+                }`}
+              >
+                Outgoing Requests
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Search and Filter Section */}
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-            {/* Search Input */}
-            <div className="relative w-full max-w-md">
-              <input
-                type="text"
-                placeholder="Search by name, skills, or message..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-3 pl-12 bg-white/60 backdrop-blur-md border border-white/40 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition-all text-gray-800 placeholder-gray-500"
+        {/* Search/Filter Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+          <div className="relative w-full sm:max-w-md">
+            <input
+              type="text"
+              placeholder="Search by name, skills, or message..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 pl-12 bg-white/60 backdrop-blur-md border border-white/40 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition-all text-gray-800 placeholder-gray-500"
+            />
+            <svg
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
-              <svg
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
-
-            {/* Status Filter */}
-            <div className="flex items-center gap-3">
-              <label className="text-sm font-medium text-gray-700">Status:</label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-3 bg-white/60 backdrop-blur-md border border-white/40 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition-all text-gray-800"
-              >
-                <option value="all" className="bg-white">All Status</option>
-                <option value="pending" className="bg-white">Pending</option>
-                <option value="accepted" className="bg-white">Accepted</option>
-                <option value="rejected" className="bg-white">Rejected</option>
-                <option value="cancelled" className="bg-white">Cancelled</option>
-              </select>
-            </div>
-
-            {/* Clear Filters Button */}
+            </svg>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <label className="text-sm font-medium text-gray-700">Status:</label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-3 bg-white/60 backdrop-blur-md border border-white/40 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition-all text-gray-800"
+            >
+              <option value="all" className="bg-white">All Status</option>
+              <option value="pending" className="bg-white">Pending</option>
+              <option value="accepted" className="bg-white">Accepted</option>
+              <option value="rejected" className="bg-white">Rejected</option>
+              <option value="cancelled" className="bg-white">Cancelled</option>
+            </select>
             {(searchQuery || statusFilter !== 'all') && (
               <button
                 onClick={() => {
@@ -274,15 +266,15 @@ export default function RequestsPage() {
               </button>
             )}
           </div>
+        </div>
 
-          {/* Results Count */}
-          <div className="text-center mt-6 text-sm text-gray-600">
-            Showing {startIndex + 1}-{Math.min(endIndex, filteredRequests.length)} of {filteredRequests.length} requests
-          </div>
+        {/* Results Count */}
+        <div className="text-center mt-6 text-sm text-gray-600">
+          Showing {startIndex + 1}-{Math.min(endIndex, filteredRequests.length)} of {filteredRequests.length} requests
         </div>
 
         {/* Requests Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {paginatedRequests.map((request) => (
             <UserProfileCard
               key={request.id}
@@ -296,9 +288,9 @@ export default function RequestsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center mt-8">
-            <div className="backdrop-blur-md bg-white/60 rounded-2xl p-2 shadow-xl border border-white/40">
-              <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row justify-center items-center mt-8 gap-2">
+            <div className="backdrop-blur-md bg-white/60 rounded-2xl p-2 shadow-xl border border-white/40 w-full sm:w-auto">
+              <div className="flex flex-wrap items-center gap-2 justify-center">
                 {/* Previous Button */}
                 <button
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}

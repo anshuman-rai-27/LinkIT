@@ -13,13 +13,14 @@ export default function HomePage() {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   // Search/filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSkillOffered, setFilterSkillOffered] = useState('');
   const [filterSkillNeeded, setFilterSkillNeeded] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 3;
 
   // Collect all unique skills for dropdowns
   const allSkillsOffered = Array.from(new Set(profiles.flatMap(p => p.skillsOffered)));
@@ -27,6 +28,11 @@ export default function HomePage() {
 
   // Filtering logic
   const filteredProfiles = profiles.filter(profile => {
+    // Exclude current user's profile
+    if (currentUser && profile.id === currentUser.id) {
+      return false;
+    }
+    
     const matchesSearch =
       profile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       profile.skillsOffered.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -42,6 +48,19 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsMounted(true);
+    
+    // Fetch current user first
+    fetch('/api/session')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching current user:', error);
+      });
+
     // Fetch profiles from API
     fetch('/api/users')
       .then(res => {
@@ -115,6 +134,18 @@ export default function HomePage() {
     );
   }
 
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-full h-full min-h-[400px]">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-500 mb-6"></div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Loading profiles...</h2>
+          <p className="text-gray-600">Please wait while we fetch the latest profiles for you.</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden" suppressHydrationWarning>
       {/* Animated Background Elements */}
@@ -127,8 +158,8 @@ export default function HomePage() {
       <div className="relative z-10">
         <HeroSection />
         {/* Search/Filter Bar */}
-        <section className="max-w-6xl mx-auto pt-8 px-4">
-          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
+        <section className="max-w-6xl mx-auto pt-8 px-4 sm:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
             <div className="relative flex-1">
               <input
                 type="text"
@@ -139,7 +170,7 @@ export default function HomePage() {
               />
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <select
                 value={filterSkillOffered}
                 onChange={e => setFilterSkillOffered(e.target.value)}
@@ -175,15 +206,15 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-        <section className="max-w-6xl mx-auto pb-12 px-4">
+        <section className="max-w-6xl mx-auto pb-12 px-4 sm:px-8">
           <h2 className="text-4xl font-bold text-center mb-6 text-gray-800 bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Find Your Perfect Skill Match</h2>
-          <div className="flex flex-col md:flex-row gap-8 justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {paginatedProfiles.length === 0 ? (
               <div className="text-center w-full py-16 text-gray-500">No profiles found.</div>
             ) : (
               paginatedProfiles.map((profile, idx) => (
                 <div
-                  key={profile.name}
+                  key={profile.id}
                   className={`transition-all duration-700 ${showCards ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                   style={{ transitionDelay: `${idx * 150}ms` }}
                 >
@@ -199,9 +230,9 @@ export default function HomePage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center mt-8">
-              <div className="backdrop-blur-md bg-white/60 rounded-2xl p-2 shadow-xl border border-white/40">
-                <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row justify-center items-center mt-8 gap-2">
+              <div className="backdrop-blur-md bg-white/60 rounded-2xl p-2 shadow-xl border border-white/40 w-full sm:w-auto">
+                <div className="flex flex-wrap items-center gap-2 justify-center">
                   {/* Previous Button */}
                   <button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
@@ -221,18 +252,18 @@ export default function HomePage() {
                   <div className="flex items-center gap-1">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
                       // Show first page, last page, current page, and pages around current
-                      const shouldShow =
-                        page === 1 ||
-                        page === totalPages ||
+                      const shouldShow = 
+                        page === 1 || 
+                        page === totalPages || 
                         (page >= currentPage - 1 && page <= currentPage + 1);
 
                       if (!shouldShow) {
                         // Show ellipsis if there's a gap
                         const prevPage = page - 1;
-                        const shouldShowEllipsis =
-                          prevPage === 1 ||
+                        const shouldShowEllipsis = 
+                          prevPage === 1 || 
                           (prevPage >= currentPage - 1 && prevPage <= currentPage + 1);
-
+                        
                         if (!shouldShowEllipsis) {
                           return null;
                         }
