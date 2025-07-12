@@ -6,49 +6,13 @@ import UserProfileCard from '../../components/UserProfileCard';
 import { FaStar, FaMapMarkerAlt, FaSearch, FaFilter } from 'react-icons/fa';
 import { SimpleFooterWithFourGrids } from '../../components/footers/simple-footer-with-four-grids';
 
-const profiles = [
-  {
-    id: "alex-chen",
-    name: "Alex Chen",
-    avatarUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-    initials: "AC",
-    borderColor: "border-orange-400",
-    location: "San Francisco",
-    yearsExperience: "5+ years experience",
-    skillsOffered: ["React", "TypeScript", "Next.js", "Redux"],
-    skillsNeeded: ["Machine Learning", "Python", "Go"],
-    rating: 4.9,
-  },
-  {
-    id: "sarah-johnson",
-    name: "Sarah Johnson",
-    avatarUrl: "",
-    initials: "SJ",
-    borderColor: "border-purple-400",
-    location: "New York",
-    yearsExperience: "7+ years experience",
-    skillsOffered: ["UI Design", "Figma", "Adobe XD", "Sketch"],
-    skillsNeeded: ["Frontend Development", "React", "Vue.js"],
-    rating: 4.8,
-  },
-  {
-    id: "maria-garcia",
-    name: "Maria Garcia",
-    avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-    initials: "MG",
-    borderColor: "border-red-400",
-    location: "Austin",
-    yearsExperience: "6+ years experience",
-    skillsOffered: ["Python", "Data Science", "Machine Learning", "R"],
-    skillsNeeded: ["Cloud Computing", "AWS", "Azure"],
-    rating: 4.9,
-  },
-];
-
 export default function HomePage() {
   const router = useRouter();
   const [showCards, setShowCards] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [profiles, setProfiles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Search/filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,8 +29,8 @@ export default function HomePage() {
   const filteredProfiles = profiles.filter(profile => {
     const matchesSearch =
       profile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      profile.skillsOffered.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      profile.skillsNeeded.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+      profile.skillsOffered.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      profile.skillsNeeded.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesOffered = filterSkillOffered ? profile.skillsOffered.includes(filterSkillOffered) : true;
     const matchesNeeded = filterSkillNeeded ? profile.skillsNeeded.includes(filterSkillNeeded) : true;
     return matchesSearch && matchesOffered && matchesNeeded;
@@ -78,6 +42,36 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsMounted(true);
+    // Fetch profiles from API
+    fetch('/api/users')
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('API response:', data);
+        console.log('Data type:', typeof data);
+        console.log('Is array:', Array.isArray(data));
+        
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setProfiles(data);
+        } else {
+          console.error('API returned non-array data:', data);
+          setProfiles([]);
+          setError('Invalid data format received');
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching profiles:', error);
+        setProfiles([]);
+        setError('Failed to load profiles');
+        setLoading(false);
+      });
+
     const timer = setTimeout(() => setShowCards(true), 200);
     return () => clearTimeout(timer);
   }, []);
@@ -101,11 +95,19 @@ export default function HomePage() {
           <section className="max-w-6xl mx-auto py-8 px-4">
             <h2 className="text-4xl font-bold text-center mb-6 text-gray-800 bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Find Your Perfect Skill Match</h2>
             <div className="flex flex-col md:flex-row gap-8 justify-center">
-              {profiles.map((profile, idx) => (
-                <div key={profile.name} className="opacity-0">
-                  <UserProfileCard {...profile} onClick={() => {}} />
-                </div>
-              ))}
+              {loading ? (
+                <div className="text-center text-gray-600">Loading profiles...</div>
+              ) : error ? (
+                <div className="text-center text-red-600">{error}</div>
+              ) : profiles.length === 0 ? (
+                <div className="text-center text-gray-600">No profiles found</div>
+              ) : (
+                profiles.map((profile, idx) => (
+                  <div key={profile.id} className="opacity-0">
+                    <UserProfileCard {...profile} onClick={() => {}} />
+                  </div>
+                ))
+              )}
             </div>
           </section>
         </div>

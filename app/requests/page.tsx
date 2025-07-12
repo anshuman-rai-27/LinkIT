@@ -4,423 +4,9 @@ import UserProfileCard from '../../components/UserProfileCard';
 import RequestDetailsModal from '../../components/RequestDetailsModal';
 import { FaStar, FaMapMarkerAlt, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
 import { SimpleFooterWithFourGrids } from '../../components/footers/simple-footer-with-four-grids';
+import { getSessionToken, getUserFromToken } from '../../lib/session';
 
-// Sample data for requests
-const incomingRequests = [
-  {
-    id: 1,
-    user: {
-      name: "Alex Chen",
-      avatarUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-      initials: "AC",
-      borderColor: "border-orange-400",
-      location: "San Francisco",
-      yearsExperience: "5+ years experience",
-      skillsOffered: ["React", "TypeScript", "Next.js", "Redux"],
-      skillsNeeded: ["Machine Learning", "Python", "Go"],
-      rating: 4.9,
-    },
-    status: "pending",
-    message: "I need help with implementing a complex state management solution in React. Your experience with Redux would be perfect for this project.",
-    requestedAt: "2024-01-15T10:30:00Z",
-  },
-  {
-    id: 2,
-    user: {
-      name: "Sarah Johnson",
-      avatarUrl: "",
-      initials: "SJ",
-      borderColor: "border-purple-400",
-      location: "New York",
-      yearsExperience: "7+ years experience",
-      skillsOffered: ["UI Design", "Figma", "Adobe XD", "Sketch"],
-      skillsNeeded: ["Frontend Development", "React", "Vue.js"],
-      rating: 4.8,
-    },
-    status: "accepted",
-    message: "Looking for a UI designer to help redesign our mobile app. Your portfolio looks amazing!",
-    requestedAt: "2024-01-14T15:45:00Z",
-  },
-  {
-    id: 3,
-    user: {
-      name: "Maria Garcia",
-      avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-      initials: "MG",
-      borderColor: "border-red-400",
-      location: "Austin",
-      yearsExperience: "6+ years experience",
-      skillsOffered: ["Python", "Data Science", "Machine Learning", "R"],
-      skillsNeeded: ["Cloud Computing", "AWS", "Azure"],
-      rating: 4.9,
-    },
-    status: "rejected",
-    message: "Need help with a machine learning project. Your data science skills would be invaluable.",
-    requestedAt: "2024-01-13T09:20:00Z",
-  },
-  {
-    id: 4,
-    user: {
-      name: "James Wilson",
-      avatarUrl: "https://randomuser.me/api/portraits/men/67.jpg",
-      initials: "JW",
-      borderColor: "border-blue-400",
-      location: "Seattle",
-      yearsExperience: "8+ years experience",
-      skillsOffered: ["AWS", "Docker", "Kubernetes", "DevOps"],
-      skillsNeeded: ["React", "TypeScript", "Frontend"],
-      rating: 4.7,
-    },
-    status: "pending",
-    message: "Looking for a DevOps engineer to help set up our CI/CD pipeline. Your AWS experience is exactly what we need.",
-    requestedAt: "2024-01-12T14:20:00Z",
-  },
-  {
-    id: 5,
-    user: {
-      name: "Emily Davis",
-      avatarUrl: "https://randomuser.me/api/portraits/women/23.jpg",
-      initials: "ED",
-      borderColor: "border-green-400",
-      location: "Boston",
-      yearsExperience: "4+ years experience",
-      skillsOffered: ["Node.js", "Express", "MongoDB", "REST APIs"],
-      skillsNeeded: ["React", "Frontend", "UI/UX"],
-      rating: 4.6,
-    },
-    status: "accepted",
-    message: "Need a backend developer to help build our API infrastructure. Your Node.js skills are perfect!",
-    requestedAt: "2024-01-11T11:15:00Z",
-  },
-  {
-    id: 6,
-    user: {
-      name: "Michael Brown",
-      avatarUrl: "https://randomuser.me/api/portraits/men/89.jpg",
-      initials: "MB",
-      borderColor: "border-yellow-400",
-      location: "Chicago",
-      yearsExperience: "9+ years experience",
-      skillsOffered: ["Java", "Spring Boot", "Microservices", "Kafka"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.8,
-    },
-    status: "pending",
-    message: "Looking for a Java developer to help with our microservices architecture. Your Spring Boot experience is valuable.",
-    requestedAt: "2024-01-10T16:45:00Z",
-  },
-  {
-    id: 7,
-    user: {
-      name: "Lisa Anderson",
-      avatarUrl: "https://randomuser.me/api/portraits/women/56.jpg",
-      initials: "LA",
-      borderColor: "border-pink-400",
-      location: "Denver",
-      yearsExperience: "6+ years experience",
-      skillsOffered: ["Vue.js", "JavaScript", "CSS", "Webpack"],
-      skillsNeeded: ["Python", "Django", "Backend"],
-      rating: 4.7,
-    },
-    status: "rejected",
-    message: "Need a frontend developer with Vue.js experience. Your portfolio shows great work!",
-    requestedAt: "2024-01-09T13:30:00Z",
-  },
-  {
-    id: 8,
-    user: {
-      name: "Robert Taylor",
-      avatarUrl: "https://randomuser.me/api/portraits/men/45.jpg",
-      initials: "RT",
-      borderColor: "border-indigo-400",
-      location: "Miami",
-      yearsExperience: "7+ years experience",
-      skillsOffered: ["Angular", "TypeScript", "RxJS", "NgRx"],
-      skillsNeeded: ["Node.js", "Express", "Backend"],
-      rating: 4.9,
-    },
-    status: "accepted",
-    message: "Looking for an Angular developer to help with our enterprise application. Your TypeScript skills are impressive.",
-    requestedAt: "2024-01-08T10:20:00Z",
-  },
-  {
-    id: 9,
-    user: {
-      name: "Jennifer Lee",
-      avatarUrl: "https://randomuser.me/api/portraits/women/78.jpg",
-      initials: "JL",
-      borderColor: "border-teal-400",
-      location: "Portland",
-      yearsExperience: "5+ years experience",
-      skillsOffered: ["GraphQL", "Apollo", "React", "TypeScript"],
-      skillsNeeded: ["Python", "FastAPI", "Backend"],
-      rating: 4.6,
-    },
-    status: "pending",
-    message: "Need help with GraphQL implementation. Your Apollo experience would be perfect for our project.",
-    requestedAt: "2024-01-07T15:10:00Z",
-  },
-  {
-    id: 10,
-    user: {
-      name: "David Martinez",
-      avatarUrl: "https://randomuser.me/api/portraits/men/34.jpg",
-      initials: "DM",
-      borderColor: "border-cyan-400",
-      location: "Phoenix",
-      yearsExperience: "8+ years experience",
-      skillsOffered: ["Go", "Docker", "Kubernetes", "gRPC"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.8,
-    },
-    status: "accepted",
-    message: "Looking for a Go developer to help with our microservices. Your gRPC experience is exactly what we need.",
-    requestedAt: "2024-01-06T12:45:00Z",
-  },
-  {
-    id: 11,
-    user: {
-      name: "Amanda White",
-      avatarUrl: "https://randomuser.me/api/portraits/women/91.jpg",
-      initials: "AW",
-      borderColor: "border-rose-400",
-      location: "Nashville",
-      yearsExperience: "4+ years experience",
-      skillsOffered: ["Svelte", "JavaScript", "CSS", "Vite"],
-      skillsNeeded: ["Python", "Django", "Backend"],
-      rating: 4.5,
-    },
-    status: "rejected",
-    message: "Need a Svelte developer for our new project. Your modern frontend skills are impressive!",
-    requestedAt: "2024-01-05T09:30:00Z",
-  },
-  {
-    id: 12,
-    user: {
-      name: "Christopher Clark",
-      avatarUrl: "https://randomuser.me/api/portraits/men/12.jpg",
-      initials: "CC",
-      borderColor: "border-emerald-400",
-      location: "Las Vegas",
-      yearsExperience: "10+ years experience",
-      skillsOffered: ["Rust", "Systems Programming", "C++", "Assembly"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.9,
-    },
-    status: "pending",
-    message: "Looking for a Rust developer for our systems programming project. Your low-level experience is valuable.",
-    requestedAt: "2024-01-04T14:15:00Z",
-  },
-];
-
-const outgoingRequests = [
-  {
-    id: 13,
-    user: {
-      name: "David Kim",
-      avatarUrl: "https://randomuser.me/api/portraits/men/45.jpg",
-      initials: "DK",
-      borderColor: "border-blue-400",
-      location: "Seattle",
-      yearsExperience: "8+ years experience",
-      skillsOffered: ["AWS", "Docker", "Kubernetes", "DevOps"],
-      skillsNeeded: ["React", "TypeScript", "Frontend"],
-      rating: 4.7,
-    },
-    status: "pending",
-    message: "I need help with setting up a CI/CD pipeline for our React application.",
-    requestedAt: "2024-01-16T14:15:00Z",
-  },
-  {
-    id: 14,
-    user: {
-      name: "Emma Wilson",
-      avatarUrl: "https://randomuser.me/api/portraits/women/28.jpg",
-      initials: "EW",
-      borderColor: "border-green-400",
-      location: "Boston",
-      yearsExperience: "4+ years experience",
-      skillsOffered: ["Node.js", "Express", "MongoDB", "REST APIs"],
-      skillsNeeded: ["React", "Frontend", "UI/UX"],
-      rating: 4.6,
-    },
-    status: "accepted",
-    message: "Looking for a backend developer to help build our API infrastructure.",
-    requestedAt: "2024-01-15T11:00:00Z",
-  },
-  {
-    id: 15,
-    user: {
-      name: "Sophie Chen",
-      avatarUrl: "https://randomuser.me/api/portraits/women/33.jpg",
-      initials: "SC",
-      borderColor: "border-purple-400",
-      location: "Los Angeles",
-      yearsExperience: "6+ years experience",
-      skillsOffered: ["Python", "Django", "PostgreSQL", "Redis"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.8,
-    },
-    status: "rejected",
-    message: "Need a Python developer to help with our Django backend. Your experience is perfect!",
-    requestedAt: "2024-01-14T09:30:00Z",
-  },
-  {
-    id: 16,
-    user: {
-      name: "Ryan Thompson",
-      avatarUrl: "https://randomuser.me/api/portraits/men/67.jpg",
-      initials: "RT",
-      borderColor: "border-orange-400",
-      location: "Austin",
-      yearsExperience: "7+ years experience",
-      skillsOffered: ["React Native", "Mobile Development", "Firebase", "Redux"],
-      skillsNeeded: ["Node.js", "Backend", "API Development"],
-      rating: 4.7,
-    },
-    status: "pending",
-    message: "Looking for a React Native developer for our mobile app. Your mobile experience is valuable.",
-    requestedAt: "2024-01-13T16:45:00Z",
-  },
-  {
-    id: 17,
-    user: {
-      name: "Natalie Rodriguez",
-      avatarUrl: "https://randomuser.me/api/portraits/women/89.jpg",
-      initials: "NR",
-      borderColor: "border-pink-400",
-      location: "San Diego",
-      yearsExperience: "5+ years experience",
-      skillsOffered: ["Vue.js", "Nuxt.js", "Vuetify", "TypeScript"],
-      skillsNeeded: ["Python", "FastAPI", "Backend"],
-      rating: 4.6,
-    },
-    status: "accepted",
-    message: "Need a Vue.js developer to help with our frontend. Your Nuxt.js experience is impressive!",
-    requestedAt: "2024-01-12T13:20:00Z",
-  },
-  {
-    id: 18,
-    user: {
-      name: "Kevin Johnson",
-      avatarUrl: "https://randomuser.me/api/portraits/men/23.jpg",
-      initials: "KJ",
-      borderColor: "border-teal-400",
-      location: "Dallas",
-      yearsExperience: "9+ years experience",
-      skillsOffered: ["C#", ".NET", "Azure", "SQL Server"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.9,
-    },
-    status: "pending",
-    message: "Looking for a .NET developer to help with our enterprise application. Your Azure experience is valuable.",
-    requestedAt: "2024-01-11T10:15:00Z",
-  },
-  {
-    id: 19,
-    user: {
-      name: "Isabella Garcia",
-      avatarUrl: "https://randomuser.me/api/portraits/women/45.jpg",
-      initials: "IG",
-      borderColor: "border-indigo-400",
-      location: "Phoenix",
-      yearsExperience: "4+ years experience",
-      skillsOffered: ["Flutter", "Dart", "Firebase", "Mobile UI"],
-      skillsNeeded: ["Node.js", "Express", "Backend"],
-      rating: 4.5,
-    },
-    status: "rejected",
-    message: "Need a Flutter developer for our cross-platform app. Your mobile development skills are great!",
-    requestedAt: "2024-01-10T14:30:00Z",
-  },
-  {
-    id: 20,
-    user: {
-      name: "Marcus Davis",
-      avatarUrl: "https://randomuser.me/api/portraits/men/78.jpg",
-      initials: "MD",
-      borderColor: "border-cyan-400",
-      location: "Houston",
-      yearsExperience: "8+ years experience",
-      skillsOffered: ["PHP", "Laravel", "MySQL", "Redis"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.8,
-    },
-    status: "accepted",
-    message: "Looking for a Laravel developer to help with our backend. Your PHP experience is perfect!",
-    requestedAt: "2024-01-09T11:45:00Z",
-  },
-  {
-    id: 21,
-    user: {
-      name: "Olivia Taylor",
-      avatarUrl: "https://randomuser.me/api/portraits/women/56.jpg",
-      initials: "OT",
-      borderColor: "border-rose-400",
-      location: "Denver",
-      yearsExperience: "6+ years experience",
-      skillsOffered: ["Svelte", "SvelteKit", "TypeScript", "Tailwind CSS"],
-      skillsNeeded: ["Python", "Django", "Backend"],
-      rating: 4.7,
-    },
-    status: "pending",
-    message: "Need a Svelte developer for our modern frontend. Your SvelteKit experience is impressive!",
-    requestedAt: "2024-01-08T15:20:00Z",
-  },
-  {
-    id: 22,
-    user: {
-      name: "Daniel Lee",
-      avatarUrl: "https://randomuser.me/api/portraits/men/34.jpg",
-      initials: "DL",
-      borderColor: "border-emerald-400",
-      location: "Miami",
-      yearsExperience: "7+ years experience",
-      skillsOffered: ["Ruby", "Rails", "PostgreSQL", "Redis"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.6,
-    },
-    status: "accepted",
-    message: "Looking for a Ruby on Rails developer. Your Rails experience would be perfect for our project.",
-    requestedAt: "2024-01-07T12:10:00Z",
-  },
-  {
-    id: 23,
-    user: {
-      name: "Ava Martinez",
-      avatarUrl: "https://randomuser.me/api/portraits/women/91.jpg",
-      initials: "AM",
-      borderColor: "border-yellow-400",
-      location: "Portland",
-      yearsExperience: "5+ years experience",
-      skillsOffered: ["Elixir", "Phoenix", "PostgreSQL", "WebSocket"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.5,
-    },
-    status: "rejected",
-    message: "Need an Elixir developer for our real-time application. Your Phoenix experience is valuable.",
-    requestedAt: "2024-01-06T09:40:00Z",
-  },
-  {
-    id: 24,
-    user: {
-      name: "Lucas Anderson",
-      avatarUrl: "https://randomuser.me/api/portraits/men/12.jpg",
-      initials: "LA",
-      borderColor: "border-violet-400",
-      location: "Nashville",
-      yearsExperience: "10+ years experience",
-      skillsOffered: ["Scala", "Akka", "Kafka", "Spark"],
-      skillsNeeded: ["React", "JavaScript", "Frontend"],
-      rating: 4.9,
-    },
-    status: "pending",
-    message: "Looking for a Scala developer for our data processing pipeline. Your Akka experience is valuable.",
-    requestedAt: "2024-01-05T13:25:00Z",
-  },
-];
-
-// Request Status Badge Component
+// Request status badge component
 const RequestStatusBadge = ({ status }: { status: string }) => {
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -430,8 +16,10 @@ const RequestStatusBadge = ({ status }: { status: string }) => {
         return { color: 'bg-green-100 text-green-700', icon: FaCheck, text: 'Accepted' };
       case 'rejected':
         return { color: 'bg-red-100 text-red-700', icon: FaTimes, text: 'Rejected' };
+      case 'cancelled':
+        return { color: 'bg-gray-100 text-gray-700', icon: FaTimes, text: 'Cancelled' };
       default:
-        return { color: 'bg-gray-100 text-gray-700', icon: FaClock, text: 'Unknown' };
+        return { color: 'bg-gray-100 text-gray-600', icon: FaClock, text: 'Unknown' };
     }
   };
 
@@ -439,38 +27,84 @@ const RequestStatusBadge = ({ status }: { status: string }) => {
   const IconComponent = config.icon;
 
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 ${config.color}`}>
-      <IconComponent className="text-xs" />
+    <span className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-medium gap-1 ${config.color}`}>
+      <IconComponent className="text-sm" />
       {config.text}
     </span>
   );
 };
 
-
-
 export default function RequestsPage() {
   const [activeTab, setActiveTab] = useState<'incoming' | 'outgoing'>('incoming');
-  const [selectedRequest, setSelectedRequest] = useState<typeof incomingRequests[0] | typeof outgoingRequests[0] | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [isClient, setIsClient] = useState(false);
+  const [requests, setRequests] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const itemsPerPage = 6;
+
+  // Fetch requests from API
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const token = getSessionToken();
+      if (!token) {
+        setError('You must be logged in to view requests');
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch('/api/request', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch requests');
+      }
+
+      const data = await response.json();
+      console.log('Fetched requests:', data);
+      setRequests(data);
+    } catch (error) {
+      console.error('Error fetching requests:', error);
+      setError('Failed to load requests');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const currentRequests = activeTab === 'incoming' ? incomingRequests : outgoingRequests;
+  // Filter requests based on active tab
+  const currentRequests = requests.filter(request => {
+    if (activeTab === 'incoming') {
+      return request.isIncoming;
+    } else {
+      return !request.isIncoming;
+    }
+  });
 
   // Filter and search logic
   const filteredRequests = currentRequests.filter((request) => {
     const matchesSearch = 
       request.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.user.skillsOffered.some(skill => 
+      request.user.skillsOffered.some((skill: string) => 
         skill.toLowerCase().includes(searchQuery.toLowerCase())
       ) ||
-      request.user.skillsNeeded.some(skill => 
+      request.user.skillsNeeded.some((skill: string) => 
         skill.toLowerCase().includes(searchQuery.toLowerCase())
       ) ||
       request.message.toLowerCase().includes(searchQuery.toLowerCase());
@@ -506,6 +140,42 @@ export default function RequestsPage() {
     );
   }
 
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+        <div className="relative z-10 max-w-6xl mx-auto py-8 px-4">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading requests...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+        <div className="relative z-10 max-w-6xl mx-auto py-8 px-4">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Error</h2>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden" suppressHydrationWarning>
       {/* Animated Background Elements */}
@@ -532,7 +202,7 @@ export default function RequestsPage() {
                   : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
               }`}
             >
-              Incoming Requests ({incomingRequests.length})
+              Incoming Requests ({currentRequests.filter(r => r.isIncoming).length})
             </button>
             <button
               key="outgoing-tab"
@@ -543,7 +213,7 @@ export default function RequestsPage() {
                   : 'text-gray-600 hover:text-gray-800 hover:bg-white/60'
               }`}
             >
-              Outgoing Requests ({outgoingRequests.length})
+              Outgoing Requests ({currentRequests.filter(r => !r.isIncoming).length})
             </button>
           </div>
         </div>
@@ -587,6 +257,7 @@ export default function RequestsPage() {
                 <option value="pending" className="bg-white">Pending</option>
                 <option value="accepted" className="bg-white">Accepted</option>
                 <option value="rejected" className="bg-white">Rejected</option>
+                <option value="cancelled" className="bg-white">Cancelled</option>
               </select>
             </div>
 
@@ -747,6 +418,7 @@ export default function RequestsPage() {
           request={selectedRequest} 
           onClose={() => setSelectedRequest(null)}
           type={activeTab}
+          onRequestUpdate={fetchRequests}
         />
       )}
       

@@ -1,9 +1,11 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Send, User, MessageSquare, Target, Plus, X as XIcon } from 'lucide-react';
+import { getSessionToken, getUserFromToken } from '../lib/session';
 
 interface RequestModalProps {
   profile: {
+    id: string;
     name: string;
     avatarUrl: string;
     initials: string;
@@ -23,26 +25,27 @@ export default function RequestModal({ profile, onClose }: RequestModalProps) {
     requestedSkills: [] as string[],
     message: ''
   });
-  const [newSkill, setNewSkill] = useState('');
-  const [newRequestedSkill, setNewRequestedSkill] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
-  const handleAddSkill = () => {
-    if (newSkill.trim() && !formData.skills.includes(newSkill.trim())) {
+  const handleAddSkill = (skill: string) => {
+    if (skill && !formData.skills.includes(skill)) {
       setFormData(prev => ({
         ...prev,
-        skills: [...prev.skills, newSkill.trim()]
+        skills: [...prev.skills, skill]
       }));
-      setNewSkill('');
     }
   };
 
-  const handleAddRequestedSkill = () => {
-    if (newRequestedSkill.trim() && !formData.requestedSkills.includes(newRequestedSkill.trim())) {
+  const handleAddRequestedSkill = (skill: string) => {
+    if (skill && !formData.requestedSkills.includes(skill)) {
       setFormData(prev => ({
         ...prev,
-        requestedSkills: [...prev.requestedSkills, newRequestedSkill.trim()]
+        requestedSkills: [...prev.requestedSkills, skill]
       }));
-      setNewRequestedSkill('');
     }
   };
 
@@ -60,11 +63,173 @@ export default function RequestModal({ profile, onClose }: RequestModalProps) {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Fetch logged-in user's profile on component mount
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // Get user from session token
+        const user = getUserFromToken();
+        console.log(user);
+        if (!user) {
+          setError('You must be logged in to send a request');
+          setLoadingProfile(false);
+          return;
+        }
+
+        // Get session token
+        const token = getSessionToken();
+        if (!token) {
+          setError('Session token not found');
+          setLoadingProfile(false);
+          return;
+        }
+
+        console.log('Fetching profile for user:', user);
+
+        const response = await fetch('/api/profile', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user profile');
+        }
+
+        const profileData = await response.json();
+        console.log('User profile data:', profileData);
+        setUserProfile(profileData);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setError('Failed to load your profile');
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Request data:', formData);
-    onClose();
+    setLoading(true);
+    setError(null);
+
+          // Validate form data
+      if (formData.skills.length === 0) {
+        setError('Please add at least one skill you can offer');
+        setLoading(false);
+        return;
+      }
+
+      if (formData.requestedSkills.length === 0) {
+        setError('Please add at least one skill you want to learn');
+        setLoading(false);
+        return;
+      }
+
+      if (!formData.message.trim()) {
+        setError('Please add a message');
+        setLoading(false);
+        return;
+      }
+
+      // Validate that skills are not empty strings
+      if (formData.skills.some(skill => !skill.trim())) {
+        setError('Please remove empty skill entries');
+        setLoading(false);
+        return;
+      }
+
+      if (formData.requestedSkills.some(skill => !skill.trim())) {
+        setError('Please remove empty skill entries');
+        setLoading(false);
+        return;
+      }
+
+    try {
+      // Get user from session token
+      const user = getUserFromToken();
+      if (!user) {
+        setError('You must be logged in to send a request');
+        setLoading(false);
+        return;
+      }
+
+      // Get session token
+      const token = getSessionToken();
+      if (!token) {
+        setError('Session token not found');
+        setLoading(false);
+        return;
+      }
+
+      // Validate profile ID
+      const profileId = parseInt(profile.id);
+      if (isNaN(profileId)) {
+        setError('Invalid profile ID');
+        setLoading(false);
+        return;
+      }
+
+      // Prepare the request data
+      const requestData = {
+        profileId: profileId,
+        offeredSkill: formData.skills.join(', '), // Join multiple skills with comma
+        requestedSkill: formData.requestedSkills.join(', '), // Join multiple skills with comma
+        message: formData.message.trim()
+      };
+
+      console.log('Sending request data:', requestData);
+      console.log('Request data JSON:', JSON.stringify(requestData));
+
+      const response = await fetch('/api/request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
+      if (!response.ok) {
+        let errorMessage = 'Failed to send request';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError);
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      let result;
+      try {
+        result = await response.json();
+        console.log('Request sent successfully:', result);
+      } catch (parseError) {
+        console.error('Error parsing success response:', parseError);
+        throw new Error('Invalid response from server');
+      }
+      
+      // Show success message
+      setSuccess(true);
+      
+      // Close modal after a short delay
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error sending request:', error);
+      setError(error instanceof Error ? error.message : 'Failed to send request');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -95,30 +260,56 @@ export default function RequestModal({ profile, onClose }: RequestModalProps) {
 
                  {/* Form */}
          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+           {/* Error Display */}
+           {error && (
+             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+               <p className="text-red-800 text-sm">{error}</p>
+             </div>
+           )}
 
-          {/* Skills You Can Offer */}
+                      {/* Success Display */}
+           {success && (
+             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+               <p className="text-green-800 text-sm">Request sent successfully! The modal will close shortly.</p>
+             </div>
+           )}
+
+           {/* Loading Profile */}
+           {loadingProfile && (
+             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+               <div className="flex items-center space-x-2">
+                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                 <p className="text-blue-800 text-sm">Loading your profile...</p>
+               </div>
+             </div>
+           )}
+
+           {/* Skills You Can Offer */}
           <div className="space-y-4">
-                         <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-               <Target className="h-5 w-5 mr-2 text-green-600" />
-               Skills You Can Offer
-             </h3>
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+              <Target className="h-5 w-5 mr-2 text-green-600" />
+              Skills You Can Offer
+            </h3>
             <div className="space-y-3">
               <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={newSkill}
-                  onChange={(e) => setNewSkill(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/50 backdrop-blur-sm text-gray-800 placeholder-gray-600"
-                  placeholder="Add a skill you can teach"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddSkill}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center"
+                <select
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAddSkill(e.target.value);
+                      e.target.value = ''; // Reset selection
+                    }
+                  }}
+                  disabled={loading || success || loadingProfile}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/50 backdrop-blur-sm text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  defaultValue=""
                 >
-                  <Plus className="h-4 w-4" />
-                </button>
+                  <option value="" disabled>Select a skill you can offer</option>
+                  {userProfile?.offeredSkills?.map((offeredSkill: any, index: number) => (
+                    <option key={index} value={offeredSkill.skill.name}>
+                      {offeredSkill.skill.name}
+                    </option>
+                  )) || []}
+                </select>
               </div>
               {formData.skills.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -150,21 +341,24 @@ export default function RequestModal({ profile, onClose }: RequestModalProps) {
             </h3>
             <div className="space-y-3">
               <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={newRequestedSkill}
-                  onChange={(e) => setNewRequestedSkill(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddRequestedSkill())}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm text-gray-800 placeholder-gray-600"
-                  placeholder="Add a skill you want to learn"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddRequestedSkill}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center"
+                <select
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAddRequestedSkill(e.target.value);
+                      e.target.value = ''; // Reset selection
+                    }
+                  }}
+                  disabled={loading || success || loadingProfile}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  defaultValue=""
                 >
-                  <Plus className="h-4 w-4" />
-                </button>
+                  <option value="" disabled>Select a skill you want to learn</option>
+                  {profile.skillsOffered.map((skill: string, index: number) => (
+                    <option key={index} value={skill}>
+                      {skill}
+                    </option>
+                  ))}
+                </select>
               </div>
               {formData.requestedSkills.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -198,7 +392,8 @@ export default function RequestModal({ profile, onClose }: RequestModalProps) {
               value={formData.message}
               onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
               rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/50 backdrop-blur-sm resize-none text-gray-800 placeholder-gray-600"
+              disabled={loading || success || loadingProfile}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/50 backdrop-blur-sm resize-none text-gray-800 placeholder-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Introduce yourself and explain why you'd like to connect with this person..."
             />
           </div>
@@ -208,16 +403,27 @@ export default function RequestModal({ profile, onClose }: RequestModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-800 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={loading || loadingProfile}
+              className="flex-1 px-6 py-3 border border-gray-300 text-gray-800 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center space-x-2"
+              disabled={loading || loadingProfile}
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send className="h-4 w-4" />
-              <span>Send Request</span>
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  <span>Send Request</span>
+                </>
+              )}
             </button>
           </div>
         </form>

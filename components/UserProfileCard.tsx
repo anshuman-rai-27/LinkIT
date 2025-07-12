@@ -78,7 +78,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
       <div>
         <div className="text-gray-700 text-sm font-semibold mb-1">Skills Offered</div>
         <div className="flex flex-wrap gap-2">
-          {skillsOffered.slice(0, 3).map((skill, idx) => (
+          {skillsOffered.slice(0, 3).map((skill: string, idx: number) => (
             <span key={idx} className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">{skill}</span>
           ))}
           {skillsOffered.length > 3 && (
@@ -90,7 +90,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
       <div>
         <div className="text-gray-700 text-sm font-semibold mb-1">Skills Needed</div>
         <div className="flex flex-wrap gap-2">
-          {skillsNeeded.slice(0, 2).map((skill, idx) => (
+          {skillsNeeded.slice(0, 2).map((skill: string, idx: number) => (
             <span key={idx} className="px-2 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-medium">{skill}</span>
           ))}
           {skillsNeeded.length > 2 && (
