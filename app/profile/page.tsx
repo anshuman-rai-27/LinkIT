@@ -26,24 +26,46 @@ export default function ProfilePage() {
 
   // Fetch profile on mount
   useEffect(() => {
-    fetch("/api/profile")
-      .then(res => res.json())
+    setLoading(true);
+    const token = getTokenFromCookie();
+    fetch("/api/profile", {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+      .then(async res => {
+        if (res.status === 404) {
+          // Profile not found - show creation form
+          setProfile(null);
+          setEdit(true); // Start in edit mode for new profiles
+          setLoading(false);
+          return null;
+        }
+        if (!res.ok) throw new Error("Failed to load profile");
+        return res.json();
+      })
       .then(data => {
-        setProfile(data);
-        setName(data.name || "");
-        setLocation(data.location || "");
-        setOfferedSkills(data.offeredSkills?.map((s: any) => s.name) || []);
-        setWantedSkills(data.wantedSkills?.map((s: any) => s.name) || []);
-        setAvailability(data.availability || "");
-        setIsPublic(data.isPublic ?? true);
-        setProfilePhoto(data.profilePhoto || null);
+        if (data) {
+          setProfile(data);
+          setName(data.name || "");
+          setLocation(data.location || "");
+          setOfferedSkills(Array.isArray(data.offeredSkills) ? data.offeredSkills.map((s: any) => s.name) : []);
+          setWantedSkills(Array.isArray(data.wantedSkills) ? data.wantedSkills.map((s: any) => s.name) : []);
+          setAvailability(data.availability || "");
+          setIsPublic(data.isPublic ?? true);
+          setProfilePhoto(data.profilePhoto || null);
+        }
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to load profile");
+        setError("Failed to load profile. Please make sure you are logged in.");
         setLoading(false);
       });
   }, []);
+
+  // Helper function to get token from cookie
+  function getTokenFromCookie() {
+    const match = document.cookie.match(/(^| )token=([^;]+)/);
+    return match ? match[2] : null;
+  }
 
   // Handle photo selection
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -97,9 +119,13 @@ export default function ProfilePage() {
         return;
       }
     }
+    const token = getTokenFromCookie();
     const res = await fetch("/api/profile", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
       body: JSON.stringify({
         name,
         location,
@@ -111,7 +137,8 @@ export default function ProfilePage() {
       }),
     });
     if (!res.ok) {
-      setError("Failed to save profile");
+      const errorData = await res.json().catch(() => ({}));
+      setError(errorData.message || "Failed to save profile");
       setSaving(false);
       return;
     }
@@ -128,8 +155,8 @@ export default function ProfilePage() {
     if (!profile) return;
     setName(profile.name || "");
     setLocation(profile.location || "");
-    setOfferedSkills(profile.offeredSkills?.map((s: any) => s.name) || []);
-    setWantedSkills(profile.wantedSkills?.map((s: any) => s.name) || []);
+    setOfferedSkills(Array.isArray(profile.offeredSkills) ? profile.offeredSkills.map((s: any) => s.name) : []);
+    setWantedSkills(Array.isArray(profile.wantedSkills) ? profile.wantedSkills.map((s: any) => s.name) : []);
     setAvailability(profile.availability || "");
     setIsPublic(profile.isPublic ?? true);
     setProfilePhoto(profile.profilePhoto || null);
@@ -152,7 +179,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-black text-white flex flex-col items-center py-8">
       <div className="w-full max-w-2xl bg-[#18181b] rounded-2xl shadow-2xl p-8 relative border border-white/20">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">User profile</h2>
+          <h2 className="text-3xl font-bold">{profile ? "User profile" : "Create Profile"}</h2>
           <div className="flex items-center gap-4">
             <button onClick={handleSave} disabled={saving} className="text-green-400 font-bold hover:underline">Save</button>
             <button onClick={handleDiscard} className="text-red-400 font-bold hover:underline">Discard</button>
@@ -239,13 +266,19 @@ export default function ProfilePage() {
         </div>
         {!edit && (
           <div className="mt-8 text-center">
-            <button onClick={() => setEdit(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">Edit Profile</button>
+            <button onClick={() => setEdit(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">
+              {profile ? "Edit Profile" : "Create Profile"}
+            </button>
           </div>
         )}
         {edit && (
           <div className="mt-8 text-center">
-            <button onClick={handleSave} disabled={saving} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold mr-4">Save</button>
-            <button onClick={handleDiscard} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">Discard</button>
+            <button onClick={handleSave} disabled={saving} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold mr-4">
+              {profile ? "Save" : "Create Profile"}
+            </button>
+            {profile && (
+              <button onClick={handleDiscard} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">Discard</button>
+            )}
           </div>
         )}
       </div>

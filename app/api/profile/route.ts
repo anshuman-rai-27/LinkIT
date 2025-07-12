@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../prisma';
+import { verifyToken } from '../../../lib/jwt';
 
 // Helper to get userId from request (replace with real auth/session logic)
 async function getUserId(req: NextRequest): Promise<number | null> {
-  // TODO: Replace with real authentication/session extraction
-  // For now, assume userId=1 for demo
-  return 1;
+  // Get token from Authorization header
+  const authHeader = req.headers.get('authorization');
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+  if (!token) return null;
+
+  try {
+    const decoded = verifyToken(token) as any;
+    return decoded.userId;
+  } catch {
+    return null;
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -13,7 +23,7 @@ export async function GET(req: NextRequest) {
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
-  const profile = await prisma.profile.findUnique({
+  const profile = await prisma.profile.findFirst({
     where: { userId },
     include: {
       offeredSkills: true,
@@ -31,10 +41,17 @@ export async function POST(req: NextRequest) {
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
+  
+  // Check if user exists before creating profile
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    return NextResponse.json({ message: 'User not found' }, { status: 404 });
+  }
+  
   const data = await req.json();
   try {
-    // Upsert profile
-    const profile = await prisma.profile.upsert({
+    // Upsert profile (basic fields only)
+    await prisma.profile.upsert({
       where: { userId },
       update: {
         name: data.name,
@@ -42,7 +59,6 @@ export async function POST(req: NextRequest) {
         profilePhoto: data.profilePhoto,
         availability: data.availability,
         isPublic: data.isPublic,
-        // Skills handled separately below
       },
       create: {
         userId,
@@ -52,42 +68,55 @@ export async function POST(req: NextRequest) {
         availability: data.availability,
         isPublic: data.isPublic,
       },
-      include: {
-        offeredSkills: true,
-        wantedSkills: true,
-      },
     });
 
-    // Update skills (replace all for simplicity)
+    // Handle offeredSkills
     if (Array.isArray(data.offeredSkills)) {
+      // Find or create all skills
+      const offeredSkillRecords = await Promise.all(
+        data.offeredSkills.map(async (name: string) => {
+          let skill = await prisma.skill.findUnique({ where: { name } });
+          if (!skill) {
+            skill = await prisma.skill.create({ data: { name } });
+          }
+          return { id: skill.id };
+        })
+      );
+      // Set offeredSkills relation
       await prisma.profile.update({
         where: { userId },
         data: {
           offeredSkills: {
-            set: [],
-            connectOrCreate: data.offeredSkills.map((name: string) => ({
-              where: { name },
-              create: { name },
-            })),
-          },
-        },
-      });
-    }
-    if (Array.isArray(data.wantedSkills)) {
-      await prisma.profile.update({
-        where: { userId },
-        data: {
-          wantedSkills: {
-            set: [],
-            connectOrCreate: data.wantedSkills.map((name: string) => ({
-              where: { name },
-              create: { name },
-            })),
+            set: offeredSkillRecords.map(s => ({ id: s.id })),
           },
         },
       });
     }
 
+    // Handle wantedSkills
+    if (Array.isArray(data.wantedSkills)) {
+      // Find or create all skills
+      const wantedSkillRecords = await Promise.all(
+        data.wantedSkills.map(async (name: string) => {
+          let skill = await prisma.skill.findUnique({ where: { name } });
+          if (!skill) {
+            skill = await prisma.skill.create({ data: { name } });
+          }
+          return { id: skill.id };
+        })
+      );
+      // Set wantedSkills relation
+      await prisma.profile.update({
+        where: { userId },
+        data: {
+          wantedSkills: {
+            set: wantedSkillRecords.map(s => ({ id: s.id })),
+          },
+        },
+      });
+    }
+
+    // Return updated profile
     const updatedProfile = await prisma.profile.findUnique({
       where: { userId },
       include: {

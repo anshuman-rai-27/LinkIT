@@ -39,8 +39,8 @@ model Profile {
   userId       Int      @unique
   user         User     @relation(fields: [userId], references: [id])
 
-  offeredSkills    Skill[]         @relation("OfferedSkills")
-  wantedSkills     Skill[]         @relation("WantedSkills")
+  offeredSkills OfferedSkill[]
+  wantedSkills  WantedSkill[]
   sentRequests     SwapRequest[]   @relation("SentRequests")
   receivedRequests SwapRequest[]   @relation("ReceivedRequests")
   feedbacksGiven   Feedback[]      @relation("GivenFeedbacks")
@@ -49,16 +49,31 @@ model Profile {
 
 model Skill {
   id           Int     @id @default(autoincrement())
-  name         String
+  name         String  @unique
   category     String?
 
-  offeredBy    Profile? @relation("OfferedSkills", fields: [offeredById], references: [id])
-  offeredById  Int?
-
-  wantedBy     Profile? @relation("WantedSkills", fields: [wantedById], references: [id])
-  wantedById   Int?
+  offeredByProfiles OfferedSkill[]
+  wantedByProfiles  WantedSkill[]
 
   @@index([name])
+}
+
+model OfferedSkill {
+  id        Int     @id @default(autoincrement())
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId Int
+
+  skill     Skill   @relation(fields: [skillId], references: [id])
+  skillId   Int
+}
+
+model WantedSkill {
+  id        Int     @id @default(autoincrement())
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId Int
+
+  skill     Skill   @relation(fields: [skillId], references: [id])
+  skillId   Int
 }
 
 model SwapRequest {
