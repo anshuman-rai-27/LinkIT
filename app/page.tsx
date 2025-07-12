@@ -140,38 +140,44 @@ const TestimonialCard = ({
   rating: number; 
 }) => {
   return (
-    <div className="group relative">
-      <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-      <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-purple-100">
-        <div className="flex items-center mb-6">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+    >
+      <div className="group relative">
+        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+        <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-purple-100">
+          <div className="flex items-center mb-6">
 
-          <div className="flex space-x-1">
-            {[...Array(rating)].map((_, i) => (
-              <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-            ))}
+            <div className="flex space-x-1">
+              {[...Array(rating)].map((_, i) => (
+                <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+              ))}
+            </div>
           </div>
+
+          {/* Testimonial text */}
+          <p className="text-slate-700 mb-8 leading-relaxed text-lg font-medium relative">
+            "{content}"
+          </p>
+
+          {/* Author info */}
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full mr-4 flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">{name.split(' ').map(n => n[0]).join('')}</span>
+
+            </div>
+            <div className="ml-4">
+              <div className="font-bold text-slate-900 text-lg">{name}</div>
+              <div className="text-slate-500 font-medium">{role}</div>
+            </div>
+          </div>
+
+          {/* Decorative elements */}
+          <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-violet-200 to-purple-200 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+          <div className="absolute bottom-4 left-4 w-8 h-8 bg-gradient-to-br from-purple-200 to-violet-200 rounded-full opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
         </div>
-
-        {/* Testimonial text */}
-        <p className="text-slate-700 mb-8 leading-relaxed text-lg font-medium relative">
-          "{content}"
-        </p>
-
-        {/* Author info */}
-        <div className="flex items-center">
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full mr-4 flex items-center justify-center">
-            <span className="text-white font-semibold text-sm">{name.split(' ').map(n => n[0]).join('')}</span>
-
-          </div>
-          <div className="ml-4">
-            <div className="font-bold text-slate-900 text-lg">{name}</div>
-            <div className="text-slate-500 font-medium">{role}</div>
-          </div>
-        </div>
-
-        {/* Decorative elements */}
-        <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-violet-200 to-purple-200 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-        <div className="absolute bottom-4 left-4 w-8 h-8 bg-gradient-to-br from-purple-200 to-violet-200 rounded-full opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
       </div>
     </motion.div>
   );
