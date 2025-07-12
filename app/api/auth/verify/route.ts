@@ -14,7 +14,7 @@ export async function GET(req: Request) {
       token:token
     },
     include:{
-      User:true
+      user:true
     }  
   })
   
@@ -23,9 +23,9 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: 'Token is not valid' }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email: resetPassword.User.email } });
+  const user = await prisma.user.findUnique({ where: { email: resetPassword.user.email } });
   if (!user) {
-    return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    return NextResponse.json({ message: 'user not found' }, { status: 404 });
   }
   await prisma.resetPasswordToken.delete({
     where:{

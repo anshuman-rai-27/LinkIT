@@ -23,7 +23,7 @@ model ResetPasswordToken {
   token     String   @unique
   createdAt DateTime @default(now())
   expires   DateTime
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Profile {
